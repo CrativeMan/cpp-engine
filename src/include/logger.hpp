@@ -83,4 +83,6 @@ private:
   }
 };
 
+static Logger LOGGER;
+
 #endif // LOGGER_H

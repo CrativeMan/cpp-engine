@@ -1,6 +1,7 @@
 #include "header/fileHandler.hpp"
 #include "include/logger.hpp"
 #include <GL/glew.h>
+#include <cstddef>
 #include <cstdio>
 #include <cstdlib>
 
@@ -9,7 +10,6 @@
 #define ID "ENGINE"
 
 Global g;
-Logger LOGGER;
 
 /* ----------------------------------------------------------------------------
  * Callbacks
@@ -70,13 +70,17 @@ int main(int argc, char *argv[]) {
       1, 2, 3  // second triangle
   };
 
-  const char *vertexShaderSource =
-      file_to_string("src/shader/vertex.glsl").c_str();
-  const char *fragmentShaderSource =
-      file_to_string("src/shader/fragment.glsl").c_str();
+  std::string shaderFiles[2] = {"src/shader/vertex.glsl",
+                                "src/shader/fragment.glsl"};
+  size_t shaderFileSize = 0;
+  const char *vertexShaderSource = readFile(shaderFiles[0], shaderFileSize);
+  const char *fragmentShaderSource = readFile(shaderFiles[1], shaderFileSize);
+
+  LOGGER.info(ID, vertexShaderSource);
+  LOGGER.info(ID, fragmentShaderSource);
+
   int success;
   char infoLog[512];
-
   unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
   glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
   glCompileShader(vertexShader);
