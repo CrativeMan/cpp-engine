@@ -1,17 +1,13 @@
 #include <GL/glew.h>
-#include <cstddef>
-#include <cstdio>
-#include <cstdlib>
-#include <cwchar>
 
 #include "header/main.hpp"
 #include "header/shader.hpp"
+#include "header/userInterface.hpp"
 #include "include/logger.hpp"
 
 #define ID "ENGINE"
 
 Global g;
-
 float vertices[] = {
     0.5f,  0.5f,  0.0f, // top right
     0.5f,  -0.5f, 0.0f, // bottom right
@@ -51,13 +47,14 @@ void init() {
     exit(EXIT_FAILURE);
   }
   glfwMakeContextCurrent(g.window);
+  glfwSetFramebufferSizeCallback(g.window, framebuffer_size_callback);
 
   glewExperimental = GL_TRUE;
   glewInit();
 
   glViewport(0, 0, 800, 600);
-  glfwSetFramebufferSizeCallback(g.window, framebuffer_size_callback);
 
+  ui::init(g.window, &g.show_demo_window);
   Logger::info(ID, "Initialized engine");
 }
 
@@ -84,7 +81,13 @@ int main(int argc, char *argv[]) {
   glEnableVertexAttribArray(0);
 
   while (!glfwWindowShouldClose(g.window)) {
-    //  input
+    glfwPollEvents();
+    if (glfwGetWindowAttrib(g.window, GLFW_ICONIFIED) != 0) {
+      ImGui_ImplGlfw_Sleep(10);
+      continue;
+    }
+
+    // input
     processInput(g.window);
 
     // rendering
@@ -96,13 +99,16 @@ int main(int argc, char *argv[]) {
     shader.use();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
+    ui::render(true, g.show_demo_window);
+    ui::renderEnd();
 
     // check and call events and swap buffers
     glfwSwapBuffers(g.window);
     glfwPollEvents();
   }
-
+  ui::shutdown();
   glDeleteProgram(shader.id);
+  glfwDestroyWindow(g.window);
   glfwTerminate();
   return 0;
 }

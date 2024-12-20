@@ -1,6 +1,6 @@
 CC = g++
 CFLAGS = -Wall -Wextra -pedantic
-LDFLAGS = -lglfw -lGL -lGLEW -lglm -lm
+LDFLAGS = -lglfw -lGL -lGLEW -lglm -lm -limgui
 SRCDIR = src
 OBJDIR = obj
 TARGETDIR = bin
@@ -26,9 +26,8 @@ clean:
 	rm -rf $(OBJDIR)
 	rm -rf $(TARGETDIR)
 
-count: 
+count:
 	cloc .
 
 run:
 	./bin/main
-

@@ -30,6 +30,8 @@
               vcpkg
               vcpkg-tool
 
+              imgui
+
               # engine specific
               glfw
               glew

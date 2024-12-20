@@ -5,6 +5,7 @@
 
 typedef struct {
   GLFWwindow *window;
+  bool show_demo_window;
 } Global;
 
 #endif // MAIN_H
