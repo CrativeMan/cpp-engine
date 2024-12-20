@@ -7,8 +7,6 @@ namespace ui {
 void init(GLFWwindow *w, bool *show_demo_window);
 void shutdown();
 void render(bool show_window, bool show_demo_window);
-void renderEnd();
-void mainWindow();
 } // namespace ui
 
 #endif // USER_INTERFACE_

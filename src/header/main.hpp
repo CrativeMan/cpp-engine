@@ -6,6 +6,7 @@
 typedef struct {
   GLFWwindow *window;
   bool show_demo_window;
+  bool renderFrame;
 } Global;
 
 #endif // MAIN_H

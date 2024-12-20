@@ -33,11 +33,11 @@ void shutdown() {
 /*
  * Windows
  */
-void mainWindow() {
-  ImGui::Begin("Main Window");
-  ImGui::TextColored(ImVec4(0.0f, 0.62f, 0.66f, 1.0f), "C++ Engine");
-  ImGui::Text("Application average %.3f ms/f\n(%.1f FPS)",
-              1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+void debugWindow() {
+  ImGui::Begin("Debug Window");
+  ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
+  ImGui::Text("Application average %.3f ms/f",
+              1000.0f / ImGui::GetIO().Framerate);
   ImGui::End();
 }
 
@@ -52,9 +52,9 @@ void render(bool show_window, bool show_demo_window) {
   if (show_demo_window)
     ImGui::ShowDemoWindow(&show_demo_window);
   if (show_window) {
-    ui::mainWindow();
+    ui::debugWindow();
   }
   ImGui::Render();
+  ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
-void renderEnd() { ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData()); }
 } // namespace ui

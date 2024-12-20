@@ -1,4 +1,5 @@
 #include <GL/glew.h>
+#include <GLFW/glfw3.h>
 
 #include "header/main.hpp"
 #include "header/shader.hpp"
@@ -28,6 +29,8 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
 void processInput(GLFWwindow *window) {
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     glfwSetWindowShouldClose(window, true);
+  if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
+    g.renderFrame = !g.renderFrame;
 }
 
 /* ----------------------------------------------------------------------------
@@ -91,7 +94,10 @@ int main(int argc, char *argv[]) {
     processInput(g.window);
 
     // rendering
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    if (g.renderFrame)
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    else
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -100,7 +106,6 @@ int main(int argc, char *argv[]) {
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
     ui::render(true, g.show_demo_window);
-    ui::renderEnd();
 
     // check and call events and swap buffers
     glfwSwapBuffers(g.window);
