@@ -1,7 +1,9 @@
+#include <cstddef>
+#include <cstdio>
 #include <imgui.h>
-#include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
+#include "header/userInterface.hpp"
 #include "include/logger.hpp"
 
 namespace ui {
@@ -21,7 +23,7 @@ void init(GLFWwindow *w, bool *show_demo_window) {
 
   ImGui_ImplGlfw_InitForOpenGL(w, true);
   ImGui_ImplOpenGL3_Init("#version 330");
-  *show_demo_window = true;
+  *show_demo_window = false;
   Logger::info("UI", "ImGui initialized");
 }
 void shutdown() {
@@ -33,13 +35,22 @@ void shutdown() {
 /*
  * Windows
  */
-void w_debugWindow(unsigned int texture) {
+void w_debugWindow(std::vector<unsigned int> texture) {
   ImGui::Begin("Debug Window");
   ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
   ImGui::Text("Application average %.3f ms/f",
               1000.0f / ImGui::GetIO().Framerate);
-  if (ImGui::CollapsingHeader("Images")) {
-    ImGui::Image(texture, ImVec2(100, 100));
+  if (ImGui::CollapsingHeader("Textures")) {
+    ImGuiTreeNodeFlags flag =
+        ImGuiTreeNodeFlags_None | ImGuiTreeNodeFlags_SpanFullWidth;
+    char buffer[100];
+    for (size_t i = 0; i < texture.size(); i++) {
+      sprintf((char *)buffer, "%d", texture[i]);
+      if (ImGui::TreeNodeEx(buffer, flag, "%s", buffer)) {
+        ImGui::Image(texture[i], ImVec2(100, 100));
+        ImGui::TreePop();
+      }
+    }
   }
   ImGui::End();
 }
@@ -48,7 +59,7 @@ void w_debugWindow(unsigned int texture) {
  * Rendering
  */
 void render(bool show_debug_window, bool show_demo_window,
-            unsigned int texture) {
+            std::vector<unsigned int> texture) {
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();

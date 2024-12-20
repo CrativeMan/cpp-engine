@@ -95,9 +95,10 @@ int main(int argc, char *argv[]) {
                         (void *)(6 * sizeof(float)));
   glEnableVertexAttribArray(2);
 
-  unsigned int texture = file::generateImage("src/imgs/container.jpg");
+  g.texture.push_back(file::generateImage("src/imgs/container.jpg"));
 
   while (!glfwWindowShouldClose(g.window)) {
+    // Events
     glfwPollEvents();
     if (glfwGetWindowAttrib(g.window, GLFW_ICONIFIED) != 0) {
       ImGui_ImplGlfw_Sleep(10);
@@ -116,16 +117,17 @@ int main(int argc, char *argv[]) {
     glClear(GL_COLOR_BUFFER_BIT);
 
     ourShader.use();
-    glBindTexture(GL_TEXTURE_2D, texture);
+    glBindTexture(GL_TEXTURE_2D, g.texture[0]);
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
-    ui::render(true, g.show_demo_window, texture);
+    ui::render(true, g.show_demo_window, g.texture);
 
     // check and call events and swap buffers
     glfwSwapBuffers(g.window);
-    glfwPollEvents();
   }
+
+  // shutdown
   ui::shutdown();
   glDeleteProgram(ourShader.id);
   glfwDestroyWindow(g.window);
