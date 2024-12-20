@@ -3,6 +3,9 @@
 
 #include <string>
 
-const char *readFile(const std::string &filePath, size_t &fileSize);
+class FileHandler {
+public:
+  static const char *readFile(std::string filepath);
+};
 
 #endif // !FILE_HANDLER_H

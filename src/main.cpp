@@ -1,20 +1,29 @@
-#include "header/fileHandler.hpp"
-#include "include/logger.hpp"
 #include <GL/glew.h>
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
+#include <cwchar>
 
 #include "header/main.hpp"
+#include "header/shader.hpp"
+#include "include/logger.hpp"
 
 #define ID "ENGINE"
 
 Global g;
 
-/* ----------------------------------------------------------------------------
- * Callbacks
- * ----------------------------------------------------------------------------
- */
+float vertices[] = {
+    0.5f,  0.5f,  0.0f, // top right
+    0.5f,  -0.5f, 0.0f, // bottom right
+    -0.5f, -0.5f, 0.0f, // top right
+    -0.5f, 0.5f,  0.0f, // top right
+};
+unsigned int indices[]{
+    0, 1, 3, // first tirangle
+    1, 2, 3  // second triangle
+};
+LOG_LEVEL Logger::level = L_MEDIUM;
+
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
   (void)window;
   glViewport(0, 0, width, height);
@@ -30,8 +39,6 @@ void processInput(GLFWwindow *window) {
  * ----------------------------------------------------------------------------
  */
 void init() {
-  LOGGER.level = MEDIUM;
-
   glfwInit();
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -39,7 +46,7 @@ void init() {
 
   g.window = glfwCreateWindow(800, 600, "engine", NULL, NULL);
   if (g.window == NULL) {
-    LOGGER.critical(ID, "Failed to initialize glfwWindow");
+    Logger::critical(ID, "Failed to initialize glfwWindow");
     glfwTerminate();
     exit(EXIT_FAILURE);
   }
@@ -51,70 +58,14 @@ void init() {
   glViewport(0, 0, 800, 600);
   glfwSetFramebufferSizeCallback(g.window, framebuffer_size_callback);
 
-  LOGGER.info(ID, "Initialized engine");
+  Logger::info(ID, "Initialized engine");
 }
 
 int main(int argc, char *argv[]) {
   (void)argc;
   (void)argv;
   init();
-
-  float vertices[] = {
-      0.5f,  0.5f,  0.0f, // top right
-      0.5f,  -0.5f, 0.0f, // bottom right
-      -0.5f, -0.5f, 0.0f, // top right
-      -0.5f, 0.5f,  0.0f, // top right
-  };
-  unsigned int indices[]{
-      0, 1, 3, // first tirangle
-      1, 2, 3  // second triangle
-  };
-
-  std::string shaderFiles[2] = {"src/shader/vertex.glsl",
-                                "src/shader/fragment.glsl"};
-  size_t shaderFileSize = 0;
-  const char *vertexShaderSource = readFile(shaderFiles[0], shaderFileSize);
-  const char *fragmentShaderSource = readFile(shaderFiles[1], shaderFileSize);
-
-  LOGGER.info(ID, vertexShaderSource);
-  LOGGER.info(ID, fragmentShaderSource);
-
-  int success;
-  char infoLog[512];
-  unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-  glCompileShader(vertexShader);
-  glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-  if (!success) {
-    glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-    LOGGER.info("VERTEX", "Shader compilation failed\n");
-    printf("%s", infoLog);
-  }
-
-  unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-  glCompileShader(fragmentShader);
-  glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-  if (!success) {
-    glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-    LOGGER.info("FRAGMENT", "Shader compilation failed\n");
-    printf("%s", infoLog);
-  }
-
-  unsigned int shaderProgram = glCreateProgram();
-  glAttachShader(shaderProgram, vertexShader);
-  glAttachShader(shaderProgram, fragmentShader);
-  glLinkProgram(shaderProgram);
-  glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-  if (!success) {
-    glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-    LOGGER.info("SHADER", "Shader compilation failed\n");
-    printf("%s", infoLog);
-  }
-
-  glUseProgram(shaderProgram);
-  glDeleteShader(vertexShader);
-  glDeleteShader(fragmentShader);
+  Shader shader("src/shader/vertex.glsl", "src/shader/fragment.glsl");
 
   unsigned int VAO;
   glGenVertexArrays(1, &VAO);
@@ -142,7 +93,7 @@ int main(int argc, char *argv[]) {
     glClear(GL_COLOR_BUFFER_BIT);
 
     glBindVertexArray(VAO);
-    glUseProgram(shaderProgram);
+    shader.use();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 
@@ -151,6 +102,7 @@ int main(int argc, char *argv[]) {
     glfwPollEvents();
   }
 
+  glDeleteProgram(shader.id);
   glfwTerminate();
   return 0;
 }

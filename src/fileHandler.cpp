@@ -1,28 +1,39 @@
-#include <fstream>
-#include <iostream>
-
+#include "header/fileHandler.hpp"
 #include "include/logger.hpp"
 
 #define ID "File Handler"
 
-const char *readFile(const std::string &filePath, size_t &fileSize) {
-  std::ifstream file(filePath, std::ios::binary | std::ios::ate);
-
-  if (!file.is_open()) {
-    LOGGER.critical(ID, "Failed to open file: " + filePath);
-    return nullptr;
+const char *FileHandler::readFile(std::string filepath) {
+  FILE *file = fopen(filepath.c_str(), "rb");
+  if (file == NULL) {
+    Logger::critical(ID, "Failed to open file");
+    return NULL;
   }
 
-  fileSize = file.tellg();
-  file.seekg(0, std::ios::beg);
+  fseek(file, 0, SEEK_END);
+  long unsigned int fileSize = ftell(file);
+  fseek(file, 0, SEEK_SET);
 
-  char *buffer = new char[fileSize + 4]; // Allocate memory dynamically
-
-  if (!file.read(buffer, fileSize)) {
-    LOGGER.error(ID, "Failed to read file" + filePath);
-    delete[] buffer; // Clean up allocated memory
-    return nullptr;
+  char *buffer = (char *)malloc(fileSize + 1);
+  if (buffer == NULL) {
+    Logger::critical(ID, "Failed to alloc buffers");
+    fclose(file);
+    return NULL;
   }
 
-  return buffer; // Return the file content as const char*
+  size_t readSize = fread(buffer, 1, fileSize, file);
+  if (readSize != fileSize) {
+    Logger::critical(ID, "Failed to read file");
+    free(buffer);
+    fclose(file);
+    return NULL;
+  }
+
+  buffer[fileSize] = '\0';
+  fclose(file);
+  const char *fileContents = (const char *)buffer;
+
+  Logger::info(ID, "Generated char* from file");
+  Logger::info(ID, filepath);
+  return fileContents;
 }

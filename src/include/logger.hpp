@@ -36,37 +36,39 @@
 #define RED "\033[0;31m"
 #define YELLOW "\033[0;33m"
 
-typedef enum { NOTHING = 0, NORMAL, MEDIUM, VERBOSE } LOG_LEVEL;
+typedef enum { L_NOTHING = 0, L_NORMAL, L_MEDIUM, L_VERBOSE } LOG_LEVEL;
 
 class Logger {
 public:
-  LOG_LEVEL level;
+  static LOG_LEVEL level;
 
-  void debug(std::string id, std::string text) {
-    if (level >= VERBOSE)
-      std::cout << print_id(id) << "[DEBUG]\t" << text << "\n";
+  static void debug(const std::string &id, const std::string &text) {
+    log<L_VERBOSE>(id, "[DEBUG]\t", text);
   }
-  void info(std::string id, std::string text) {
-    if (level >= MEDIUM)
-      std::cout << print_id(id) << "[INFO]\t" << text << "\n";
+  static void info(const std::string &id, const std::string &text) {
+    log<L_MEDIUM>(id, "[INFO]\t", text);
   }
-  void warn(std::string id, std::string text) {
-    if (level >= NORMAL)
-      std::cout << YELLOW << print_id(id) << "[WARN]\t" << text << RESET
-                << "\n";
+  static void warn(const std::string &id, const std::string &text) {
+    log<L_NORMAL>(id, YELLOW + std::string("[WARN]\t") + RESET, text);
   }
-  void error(std::string id, std::string text) {
-    if (level >= NORMAL)
-      std::cerr << RED << print_id(id) << "[ERROR]\t" << text << RESET << "\n";
+  static void error(const std::string &id, const std::string &text) {
+    log<L_NORMAL>(id, RED + std::string("[ERROR]\t") + RESET, text, std::cerr);
   }
-  void critical(std::string id, std::string text) {
-    if (level >= NORMAL)
-      std::cerr << RED << print_id(id) << "[CRITICAL]\t" << text << RESET
-                << "\n";
+  static void critical(const std::string &id, const std::string &text) {
+    log<L_NORMAL>(id, RED + std::string("[CRITICAL]\t") + RESET, text,
+                  std::cerr);
   }
 
 private:
-  std::string print_id(std::string id) {
+  template <LOG_LEVEL L, typename Stream = std::ostream>
+  static void log(const std::string &id, const std::string &prefix,
+                  const std::string &text, Stream &stream = std::cout) {
+    if (level >= L) {
+      stream << print_id(id) << prefix << text << "\n";
+    }
+  }
+
+  static std::string print_id(const std::string &id) {
     std::string rtrn;
     rtrn.append(time_as_string());
     rtrn.append("[" + id + "]");
@@ -74,7 +76,7 @@ private:
     return rtrn;
   }
 
-  std::string time_as_string() {
+  static std::string time_as_string() {
     std::time_t t = std::time(0);
     std::tm *now = std::localtime(&t);
     char buffer[25];
@@ -82,7 +84,5 @@ private:
     return std::string(buffer);
   }
 };
-
-static Logger LOGGER;
 
 #endif // LOGGER_H
