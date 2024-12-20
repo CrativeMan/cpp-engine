@@ -3,3 +3,4 @@ obj/
 bin/
 main
 imgui.ini
+.clocignore

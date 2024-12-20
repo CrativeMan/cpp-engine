@@ -5,7 +5,7 @@ SRCDIR = src
 OBJDIR = obj
 TARGETDIR = bin
 SRCS = $(wildcard $(SRCDIR)/*.cpp)
-OBJS = $(patsubst $(SRCDIR)/*.cpp, $(OBJDIR)/%.o, $(SRCS))
+OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SRCS))
 TARGETMAIN = $(TARGETDIR)/main
 
 all: $(TARGETMAIN)
@@ -20,14 +20,16 @@ $(OBJDIR):
 	mkdir -p $(OBJDIR)
 
 $(TARGETMAIN): $(OBJS) | $(TARGETDIR)
-	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
+	@echo "Building engine..."
+	$(CC) $(CFLAGS) $(OBJS) -o $@ $(LDFLAGS)
+	@echo "Finished building engine."
 
 clean:
 	rm -rf $(OBJDIR)
 	rm -rf $(TARGETDIR)
 
 count:
-	cloc .
+	cloc --exclude-list-file=.clocignore .
 
 run:
 	./bin/main

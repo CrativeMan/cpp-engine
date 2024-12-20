@@ -33,27 +33,30 @@ void shutdown() {
 /*
  * Windows
  */
-void debugWindow() {
+void w_debugWindow(unsigned int texture) {
   ImGui::Begin("Debug Window");
   ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
   ImGui::Text("Application average %.3f ms/f",
               1000.0f / ImGui::GetIO().Framerate);
+  if (ImGui::CollapsingHeader("Images")) {
+    ImGui::Image(texture, ImVec2(100, 100));
+  }
   ImGui::End();
 }
 
 /*
  * Rendering
  */
-void render(bool show_window, bool show_demo_window) {
+void render(bool show_debug_window, bool show_demo_window,
+            unsigned int texture) {
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
 
   if (show_demo_window)
     ImGui::ShowDemoWindow(&show_demo_window);
-  if (show_window) {
-    ui::debugWindow();
-  }
+  if (show_debug_window)
+    ui::w_debugWindow(texture);
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }

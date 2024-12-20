@@ -1,11 +1,8 @@
 #ifndef FILE_HANDLER_H
 #define FILE_HANDLER_H
 
-#include <string>
-
-class FileHandler {
-public:
-  static const char *readFile(std::string filepath);
-};
+namespace file {
+unsigned int generateImage(const char *filename);
+}
 
 #endif // !FILE_HANDLER_H
