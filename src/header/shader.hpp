@@ -34,10 +34,12 @@ public:
 
       vertexCode = vShaderStream.str();
       fragmentCode = fShaderStream.str();
+      Logger::info("Shader", "Generated char* for shader from files '%s', '%s'",
+                   vertexPath, fragmentPath);
     } catch (std::ifstream::failure &e) {
-      Logger::error("SHADER", "File not successfully read");
+      Logger::error("SHADER", "Files not successfully read '%s', '%s'",
+                    vertexPath, fragmentPath);
     }
-    Logger::info("SHADER", "Got code from files");
     const char *vShaderCode = vertexCode.c_str();
     const char *fShaderCode = fragmentCode.c_str();
 
@@ -93,21 +95,21 @@ private:
       glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
       if (!success) {
         glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-        std::cout
-            << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n"
-            << infoLog
-            << "\n -- --------------------------------------------------- -- "
-            << std::endl;
+        Logger::error(
+            "Shader",
+            "Shader compilation error of type '%s'\n%s\n -- "
+            "--------------------------------------------------- -- \n",
+            type.c_str());
       }
     } else {
       glGetProgramiv(shader, GL_LINK_STATUS, &success);
       if (!success) {
         glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-        std::cout
-            << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n"
-            << infoLog
-            << "\n -- --------------------------------------------------- -- "
-            << std::endl;
+        Logger::error(
+            "Shader",
+            "Program linking error of type '%s'\n%s\n -- "
+            "--------------------------------------------------- -- \n",
+            type.c_str());
       }
     }
   }

@@ -27,6 +27,7 @@ unsigned int generateImage(const char *filename) {
   }
 
   stbi_image_free(data);
+  Logger::info("File", "Generated image '%d'", texture);
   return texture;
 }
 } // namespace file

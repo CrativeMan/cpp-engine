@@ -1,36 +1,11 @@
-/*
-   Created by Crative (github.com/CrativeMan)
-
-   MIT License
-
-   Copyright (c) 2024 Sebastian Hannig
-
-   Permission is hereby granted, free of charge, to any person obtaining a copy
-   of this software and associated documentation files (the "Software"), to deal
-   in the Software without restriction, including without limitation the rights
-   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-   copies of the Software, and to permit persons to whom the Software is
-   furnished to do so, subject to the following conditions:
-
-   The above copyright notice and this permission notice shall be included in
-   all copies or substantial portions of the Software.
-
-   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-   SOFTWARE.
-*/
-
 #ifndef LOGGER_H
 #define LOGGER_H
 
+#include <cstdarg>
 #include <cstdio>
 #include <ctime>
-#include <iostream>
 #include <string>
+#include <iostream>
 
 #define RESET "\033[0m"
 #define RED "\033[0;31m"
@@ -42,30 +17,53 @@ class Logger {
 public:
   static LOG_LEVEL level;
 
-  static void debug(const std::string &id, const std::string &text) {
-    log<L_VERBOSE>(id, "[DEBUG]\t", text);
+  static void debug(const std::string &id, const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+    log<L_VERBOSE>(id, "[DEBUG]\t", format, args);
+    va_end(args);
   }
-  static void info(const std::string &id, const std::string &text) {
-    log<L_MEDIUM>(id, "[INFO]\t", text);
+  static void info(const std::string &id, const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+    log<L_MEDIUM>(id, "[INFO]\t", format, args);
+    va_end(args);
   }
-  static void warn(const std::string &id, const std::string &text) {
-    log<L_NORMAL>(id, YELLOW + std::string("[WARN]\t") + RESET, text);
+  static void warn(const std::string &id, const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+    log<L_NORMAL>(id, YELLOW + std::string("[WARN]\t") + RESET, format, args);
+    va_end(args);
   }
-  static void error(const std::string &id, const std::string &text) {
-    log<L_NORMAL>(id, RED + std::string("[ERROR]\t") + RESET, text, std::cerr);
-  }
-  static void critical(const std::string &id, const std::string &text) {
-    log<L_NORMAL>(id, RED + std::string("[CRITICAL]\t") + RESET, text,
+  static void error(const std::string &id, const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+    log<L_NORMAL>(id, RED + std::string("[ERROR]\t") + RESET, format, args,
                   std::cerr);
+    va_end(args);
+  }
+  static void critical(const std::string &id, const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+    log<L_NORMAL>(id, RED + std::string("[CRITICAL]\t") + RESET, format, args,
+                  std::cerr);
+    va_end(args);
   }
 
 private:
   template <LOG_LEVEL L, typename Stream = std::ostream>
   static void log(const std::string &id, const std::string &prefix,
-                  const std::string &text, Stream &stream = std::cout) {
+                  const char *format, va_list args,
+                  Stream &stream = std::cout) {
     if (level >= L) {
-      stream << print_id(id) << prefix << text << "\n";
+      stream << print_id(id) << prefix << format_string(format, args) << "\n";
     }
+  }
+
+  static std::string format_string(const char *format, va_list args) {
+    char buffer[1024];
+    vsnprintf(buffer, sizeof(buffer), format, args);
+    return std::string(buffer);
   }
 
   static std::string print_id(const std::string &id) {

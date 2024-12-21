@@ -72,7 +72,7 @@ void init() {
     glfwTerminate();
     exit(EXIT_FAILURE);
   }
-  Logger::info(ID, "Initialized window");
+  Logger::info(ID, "Initialized window '%d'", g.window);
   glfwMakeContextCurrent(g.window);
   glfwSetFramebufferSizeCallback(g.window, framebuffer_size_callback);
   glViewport(0, 0, WIDTH, HEIGHT);
@@ -114,6 +114,7 @@ int main(int argc, char *argv[]) {
 
   g.texture.push_back(file::generateImage("src/imgs/container.jpg"));
 
+  Logger::info(ID, "Started rendering loop");
   while (!glfwWindowShouldClose(g.window)) {
     // Events
     g.sysMon.update();

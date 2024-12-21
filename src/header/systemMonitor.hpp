@@ -24,24 +24,6 @@ private:
   size_t initialRAMUsage = 0;
   bool initializedRAM = false;
 
-  struct MemoryInfo {
-    size_t total;
-    size_t used;
-    size_t free;
-  };
-
-  MemoryInfo getRAMInfo() {
-    struct sysinfo memInfo;
-    sysinfo(&memInfo);
-
-    MemoryInfo info;
-    info.total = memInfo.totalram * memInfo.mem_unit;
-    info.free = memInfo.freeram * memInfo.mem_unit;
-    info.used = info.total - info.free;
-
-    return info;
-  }
-
   double getCPUUsage() {
     std::ifstream statFile("/proc/stat");
     std::string line;
@@ -104,33 +86,21 @@ public:
   }
 
   void render() {
-    ImGuiTreeNodeFlags flag =
-        ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_DefaultOpen;
-    if (ImGui::TreeNodeEx("Ram", flag)) {
-      // System RAM info
-      MemoryInfo sysRAM = getRAMInfo();
-      ImGui::Text("System RAM:");
-      ImGui::Text("  Total: %.2f MB", sysRAM.total / (1024.0 * 1024.0));
-      ImGui::Text("  Used:  %.2f MB", sysRAM.used / (1024.0 * 1024.0));
-      ImGui::Text("  Free:  %.2f MB", sysRAM.free / (1024.0 * 1024.0));
-
-      // Process RAM info
-      size_t currentMemory = getProcessMemoryUsage();
-      ImGui::Text("\nProcess RAM Usage:");
-      ImGui::Text("  Current: %.2f MB", currentMemory / (1024.0 * 1024.0));
-      ImGui::Text("  Peak:    %.2f MB", peakRAMUsage / (1024.0 * 1024.0));
-      ImGui::Text("  Change:  %.2f MB",
-                  (currentMemory - initialRAMUsage) / (1024.0 * 1024.0));
-      ImGui::TreePop();
-    }
+    // Process RAM info
+    size_t currentMemory = getProcessMemoryUsage();
+    ImGui::Text("Process RAM Usage:");
+    ImGui::Text("  Current: %.2f MB", currentMemory / (1024.0 * 1024.0));
+    ImGui::Text("  Peak:    %.2f MB", peakRAMUsage / (1024.0 * 1024.0));
+    ImGui::Text("  Change:  %.2f MB",
+                (currentMemory - initialRAMUsage) / (1024.0 * 1024.0));
 
     // CPU Usage
     double cpuUsage = getCPUUsage();
-    ImGui::Text("\nCPU Usage: %.2f%%", cpuUsage);
+    ImGui::Text("CPU Usage: %.2f%%", cpuUsage);
 
     // Frame Time and FPS
     ImGui::Text("Frame Time: %.3fms", frameTime);
-    ImGui::Text("FPS: %.3f", fps);
+    ImGui::Text("FPS: %.0f", fps);
   }
 };
 
