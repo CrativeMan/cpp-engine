@@ -37,28 +37,31 @@ public:
     } catch (std::ifstream::failure &e) {
       Logger::error("SHADER", "File not successfully read");
     }
+    Logger::info("SHADER", "Got code from files");
     const char *vShaderCode = vertexCode.c_str();
     const char *fShaderCode = fragmentCode.c_str();
-    // 2. compile shaders
+
     unsigned int vertex, fragment;
     // vertex shader
     vertex = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex, 1, &vShaderCode, NULL);
     glCompileShader(vertex);
     checkCompileErrors(vertex, "VERTEX");
+    Logger::info("SHADER", "Vertex shader compiled");
     // fragment Shader
     fragment = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment, 1, &fShaderCode, NULL);
     glCompileShader(fragment);
     checkCompileErrors(fragment, "FRAGMENT");
+    Logger::info("SHADER", "Fragment shader compiled");
     // shader Program
     id = glCreateProgram();
     glAttachShader(id, vertex);
     glAttachShader(id, fragment);
     glLinkProgram(id);
     checkCompileErrors(id, "PROGRAM");
-    // delete the shaders as they're linked into our program now and no longer
-    // necessary
+    Logger::info("SHADER", "Shader compiled");
+
     glDeleteShader(vertex);
     glDeleteShader(fragment);
   }
