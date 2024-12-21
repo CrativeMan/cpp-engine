@@ -1,10 +1,14 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "header/fileHandler.hpp"
+#include "header/gfx.hpp"
+#include "header/globals.h"
 #include "header/main.hpp"
 #include "header/shader.hpp"
-#include "header/userInterface.hpp"
 #include "include/logger.hpp"
 
 #define ID "ENGINE"
@@ -45,7 +49,7 @@ void init() {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  g.window = glfwCreateWindow(800, 600, "engine", NULL, NULL);
+  g.window = glfwCreateWindow(WIDTH, HEIGHT, "engine", NULL, NULL);
   if (g.window == NULL) {
     Logger::critical(ID, "Failed to initialize glfwWindow");
     glfwTerminate();
@@ -53,12 +57,13 @@ void init() {
   }
   glfwMakeContextCurrent(g.window);
   glfwSetFramebufferSizeCallback(g.window, framebuffer_size_callback);
-  glViewport(0, 0, 800, 600);
+  glViewport(0, 0, WIDTH, HEIGHT);
 
   glewExperimental = GL_TRUE;
   glewInit();
 
   ui::init(g.window, &g.show_demo_window);
+  g.sysMon = SystemMonitor();
   Logger::info(ID, "Initialized engine");
 }
 
@@ -99,6 +104,7 @@ int main(int argc, char *argv[]) {
 
   while (!glfwWindowShouldClose(g.window)) {
     // Events
+    g.sysMon.update();
     glfwPollEvents();
     if (glfwGetWindowAttrib(g.window, GLFW_ICONIFIED) != 0) {
       ImGui_ImplGlfw_Sleep(10);
@@ -109,19 +115,7 @@ int main(int argc, char *argv[]) {
     processInput(g.window);
 
     // rendering
-    if (g.renderFrame)
-      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    else
-      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    ourShader.use();
-    glBindTexture(GL_TEXTURE_2D, g.texture[0]);
-    glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
-    ui::render(true, g.show_demo_window, g.texture);
+    gfx::render(&g, &ourShader, VAO);
 
     // check and call events and swap buffers
     glfwSwapBuffers(g.window);

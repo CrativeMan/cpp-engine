@@ -3,7 +3,8 @@
 #include <imgui.h>
 #include <imgui_impl_opengl3.h>
 
-#include "header/userInterface.hpp"
+#include "header/gfx.hpp"
+#include "header/systemMonitor.hpp"
 #include "include/logger.hpp"
 
 namespace ui {
@@ -35,11 +36,9 @@ void shutdown() {
 /*
  * Windows
  */
-void w_debugWindow(std::vector<unsigned int> texture) {
+void w_debugWindow(std::vector<unsigned int> texture, SystemMonitor sysMon) {
   ImGui::Begin("Debug Window");
-  ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
-  ImGui::Text("Application average %.3f ms/f",
-              1000.0f / ImGui::GetIO().Framerate);
+  sysMon.render();
   if (ImGui::CollapsingHeader("Textures")) {
     ImGuiTreeNodeFlags flag =
         ImGuiTreeNodeFlags_None | ImGuiTreeNodeFlags_SpanFullWidth;
@@ -59,7 +58,7 @@ void w_debugWindow(std::vector<unsigned int> texture) {
  * Rendering
  */
 void render(bool show_debug_window, bool show_demo_window,
-            std::vector<unsigned int> texture) {
+            std::vector<unsigned int> texture, SystemMonitor sysMon) {
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
@@ -67,7 +66,7 @@ void render(bool show_debug_window, bool show_demo_window,
   if (show_demo_window)
     ImGui::ShowDemoWindow(&show_demo_window);
   if (show_debug_window)
-    ui::w_debugWindow(texture);
+    ui::w_debugWindow(texture, sysMon);
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
