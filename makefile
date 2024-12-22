@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -Wall -Wextra -pedantic
+CFLAGS = -Wall -Wextra -pedantic -Wno-type-limits
 LDFLAGS = -lglfw -lGL -lGLEW -lglm -lm -limgui -lassimp
 SRCDIR = src
 OBJDIR = obj

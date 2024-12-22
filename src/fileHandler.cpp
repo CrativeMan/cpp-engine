@@ -17,7 +17,7 @@ unsigned int generateImage(const char *path, const std::string &directory) {
   unsigned char *data =
       stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
   if (data) {
-    GLenum format;
+    GLenum format = GL_NONE;
     if (nrComponents == 1)
       format = GL_RED;
     else if (nrComponents == 3)

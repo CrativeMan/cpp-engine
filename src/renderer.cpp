@@ -10,9 +10,9 @@
 
 namespace gfx {
 void render(Shader *shader, Model *model, Camera *camera) {
-  glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+  glClearColor(0.12f, 0.12f, 0.15f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  // don't forget to enable shader before setting uniforms
+
   shader->use();
 
   // view/projection transformations

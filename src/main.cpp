@@ -73,6 +73,8 @@ void events() {
   lastFrame = currentFrame;
   g.sysMon.update();
 
+  glfwPollEvents();
+
   if (g.trapMouse)
     glfwSetInputMode(g.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   if (!g.trapMouse)
@@ -131,12 +133,11 @@ int main(int argc, char *argv[]) {
   Logger::info(ID, "Started rendering loop");
   while (!glfwWindowShouldClose(g.window)) {
     // Events
-    glfwPollEvents();
+    events();
     if (glfwGetWindowAttrib(g.window, GLFW_ICONIFIED) != 0) {
       ImGui_ImplGlfw_Sleep(10);
       continue;
     }
-    events();
 
     // input
     processInput(g.window);
@@ -145,7 +146,6 @@ int main(int argc, char *argv[]) {
     gfx::render(&shader, &model, &camera);
     ui::render(true, g.show_demo_window, model.textureIds, g.sysMon);
 
-    // check and call events and swap buffers
     glfwSwapBuffers(g.window);
   }
 

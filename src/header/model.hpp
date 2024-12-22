@@ -16,8 +16,11 @@
 
 class Model {
 public:
-  std::vector<unsigned int> textureIds;
+  std::vector<unsigned int> textureIds; // texutre ids for Debug utils
+
   Model(const char *path) { loadModel(path); }
+
+  // Draws all meshes associated to model
   void Draw(Shader &shader) {
     for (unsigned int i = 0; i < meshes.size(); i++)
       meshes[i].Draw(shader);
@@ -29,10 +32,12 @@ private:
   std::string directory;
 
   void loadModel(std::string path) {
-    Assimp::Importer importer;
+    Assimp::Importer importer; // starts importer
+    // reads obj model into aiScene (assimp high level scene)
     const aiScene *scene =
         importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
+    // check if model loaded correctly
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
         !scene->mRootNode) {
       Logger::error("ASSIMP", "%s", importer.GetErrorString());
@@ -40,11 +45,13 @@ private:
     }
     directory = path.substr(0, path.find_last_of('/'));
 
+    // process nodes recursivly
     processNode(scene->mRootNode, scene);
   }
 
   void processNode(aiNode *node, const aiScene *scene) {
     unsigned int i;
+    // getting each mesh from node
     for (i = 0; i < node->mNumMeshes; i++) {
       aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
       meshes.push_back(processMesh(mesh, scene));
@@ -55,6 +62,7 @@ private:
     }
   }
 
+  // turn mesh into our data type
   Mesh processMesh(aiMesh *mesh, const aiScene *scene) {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
@@ -108,10 +116,12 @@ private:
   std::vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type,
                                             std::string typeName) {
     std::vector<Texture> textures;
+    // loop over all the textures in the material
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
       aiString str;
-      mat->GetTexture(type, i, &str);
+      mat->GetTexture(type, i, &str); // getting the texutre path
       bool skip = false;
+      // check if texture has already been loaded
       for (unsigned int j = 0; j < textures_loaded.size(); j++) {
         if (std::strcmp(textures_loaded[j].path.data, str.C_Str()) == 0) {
           textures.push_back(textures_loaded[j]);
@@ -119,7 +129,7 @@ private:
           break;
         }
       }
-      if (!skip) {
+      if (!skip) { // skip when already added
         Texture texture;
         texture.id = file::generateImage(str.C_Str(), directory);
         texture.type = typeName;
