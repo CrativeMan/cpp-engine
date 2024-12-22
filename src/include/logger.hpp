@@ -20,32 +20,32 @@ public:
   static void debug(const std::string &id, const char *format, ...) {
     va_list args;
     va_start(args, format);
-    log<L_VERBOSE>(id, "[DEBUG]\t", format, args);
+    log<L_VERBOSE>(id, "[DEBUG]  ", format, args);
     va_end(args);
   }
   static void info(const std::string &id, const char *format, ...) {
     va_list args;
     va_start(args, format);
-    log<L_MEDIUM>(id, "[INFO]\t", format, args);
+    log<L_MEDIUM>(id, "[INFO]  ", format, args);
     va_end(args);
   }
   static void warn(const std::string &id, const char *format, ...) {
     va_list args;
     va_start(args, format);
-    log<L_NORMAL>(id, YELLOW + std::string("[WARN]\t") + RESET, format, args);
+    log<L_NORMAL>(id, YELLOW + std::string("[WARN]  ") + RESET, format, args);
     va_end(args);
   }
   static void error(const std::string &id, const char *format, ...) {
     va_list args;
     va_start(args, format);
-    log<L_NORMAL>(id, RED + std::string("[ERROR]\t") + RESET, format, args,
+    log<L_NORMAL>(id, RED + std::string("[ERROR]  ") + RESET, format, args,
                   std::cerr);
     va_end(args);
   }
   static void critical(const std::string &id, const char *format, ...) {
     va_list args;
     va_start(args, format);
-    log<L_NORMAL>(id, RED + std::string("[CRITICAL]\t") + RESET, format, args,
+    log<L_NORMAL>(id, RED + std::string("[CRITICAL]  ") + RESET, format, args,
                   std::cerr);
     va_end(args);
   }
@@ -68,8 +68,10 @@ private:
 
   static std::string print_id(const std::string &id) {
     std::string rtrn;
+    rtrn.append(YELLOW);
     rtrn.append(time_as_string());
     rtrn.append("[" + id + "]");
+    rtrn.append(RESET);
     rtrn.append(" ");
     return rtrn;
   }
