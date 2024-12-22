@@ -1,5 +1,5 @@
-#ifndef CAMERA_H
-#define CAMERA_H
+#ifndef CAMERA_HPP
+#define CAMERA_HPP
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -132,4 +132,4 @@ private:
     Up = glm::normalize(glm::cross(Right, Front));
   }
 };
-#endif
+#endif // CAMERA_HPP

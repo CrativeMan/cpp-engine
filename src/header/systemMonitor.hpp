@@ -1,5 +1,5 @@
-#ifndef SYSMON_H
-#define SYSMON_H
+#ifndef SYSMON_HPP
+#define SYSMON_HPP
 
 #include "imgui.h"
 #include <chrono>
@@ -104,4 +104,4 @@ public:
   }
 };
 
-#endif // SYSMON_H
+#endif // SYSMON_HPP

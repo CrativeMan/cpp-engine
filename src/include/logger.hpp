@@ -1,11 +1,11 @@
-#ifndef LOGGER_H
-#define LOGGER_H
+#ifndef LOGGER_HPP
+#define LOGGER_HPP
 
 #include <cstdarg>
 #include <cstdio>
 #include <ctime>
-#include <string>
 #include <iostream>
+#include <string>
 
 #define RESET "\033[0m"
 #define RED "\033[0;31m"
@@ -83,4 +83,4 @@ private:
   }
 };
 
-#endif // LOGGER_H
+#endif // LOGGER_HPP

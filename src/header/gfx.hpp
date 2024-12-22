@@ -1,5 +1,5 @@
-#ifndef GFX_H
-#define GFX_H
+#ifndef GFX_HPP
+#define GFX_HPP
 
 #include "../header/shader.hpp"
 
@@ -20,4 +20,4 @@ void render(bool show_debug_window, bool show_demo_window,
             std::vector<unsigned int> textures, SystemMonitor sysMon);
 } // namespace ui
 
-#endif // GFX_H
+#endif // GFX_HPP

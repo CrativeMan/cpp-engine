@@ -1,5 +1,5 @@
-#ifndef SHADER_H
-#define SHADER_H
+#ifndef SHADER_HPP
+#define SHADER_HPP
 
 #include "../include/logger.hpp"
 #include <GL/glew.h>
@@ -121,4 +121,4 @@ private:
   }
 };
 
-#endif // SHADER_H
+#endif // SHADER_HPP

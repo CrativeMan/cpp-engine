@@ -1,5 +1,5 @@
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef MAIN_HPP
+#define MAIN_HPP
 
 #include <GLFW/glfw3.h>
 #include <vector>
@@ -15,4 +15,4 @@ typedef struct {
   bool trapMouse = true;
 } Global;
 
-#endif // MAIN_H
+#endif // MAIN_HPP
