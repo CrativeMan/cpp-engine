@@ -3,18 +3,16 @@
 
 #include "../header/shader.hpp"
 
-#include "../header/main.hpp"
 #include "camera.hpp"
+#include "model.hpp"
 #include "systemMonitor.hpp"
 
 #include <imgui_impl_glfw.h>
 #include <vector>
 
 namespace gfx {
-void render(Global *g, Shader *lightingShader, Shader *lightCubeShader,
-            Camera *camera, unsigned int cubeVAO, unsigned int lightCubeVAO);
-} // namespace gfx
-
+void render(Shader *shader, Model *model, Camera *camera); // namespace gfx
+}
 namespace ui {
 void init(GLFWwindow *w, bool *show_demo_window);
 void shutdown();

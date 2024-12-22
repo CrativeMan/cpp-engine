@@ -1,17 +1,21 @@
 #include "include/logger.hpp"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-
 #define STB_IMAGE_IMPLEMENTATION
 #include "include/stb_img.h"
 
 namespace file {
-unsigned int generateImage(const char *filename) {
+void initFileHandler() { stbi_set_flip_vertically_on_load(true); }
+unsigned int generateImage(const char *path, const std::string &directory) {
+  std::string filename = std::string(path);
+  filename = directory + '/' + filename;
+
   unsigned int textureID;
   glGenTextures(1, &textureID);
 
   int width, height, nrComponents;
-  unsigned char *data = stbi_load(filename, &width, &height, &nrComponents, 0);
+  unsigned char *data =
+      stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
   if (data) {
     GLenum format;
     if (nrComponents == 1)
@@ -34,11 +38,11 @@ unsigned int generateImage(const char *filename) {
 
     stbi_image_free(data);
   } else {
-    Logger::error("Texture", "Texture failed to load at path: %s", filename);
+    Logger::error("Texture", "Texture failed to load at path: %s", path);
     stbi_image_free(data);
   }
 
-  Logger::info("Texture", "Generated texture from path: %s", filename);
+  Logger::info("Texture", "Generated texture from path: %s", path);
   return textureID;
 }
 } // namespace file

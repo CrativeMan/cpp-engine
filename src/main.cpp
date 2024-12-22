@@ -6,6 +6,7 @@
 #include "header/gfx.hpp"
 #include "header/globals.h"
 #include "header/main.hpp"
+#include "header/model.hpp"
 #include "header/shader.hpp"
 #include "include/logger.hpp"
 
@@ -15,34 +16,6 @@ Global g;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float deltaTime, lastFrame, lastX, lastY;
 bool firstMouse;
-float vertices[] = {
-    -0.5f, -0.5f, -0.5f, 0.0f,  0.0f,  -1.0f, 0.0f,  0.0f,  0.5f,  -0.5f, -0.5f,
-    0.0f,  0.0f,  -1.0f, 1.0f,  0.0f,  0.5f,  0.5f,  -0.5f, 0.0f,  0.0f,  -1.0f,
-    1.0f,  1.0f,  0.5f,  0.5f,  -0.5f, 0.0f,  0.0f,  -1.0f, 1.0f,  1.0f,  -0.5f,
-    0.5f,  -0.5f, 0.0f,  0.0f,  -1.0f, 0.0f,  1.0f,  -0.5f, -0.5f, -0.5f, 0.0f,
-    0.0f,  -1.0f, 0.0f,  0.0f,  -0.5f, -0.5f, 0.5f,  0.0f,  0.0f,  1.0f,  0.0f,
-    0.0f,  0.5f,  -0.5f, 0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,  0.5f,  0.5f,
-    0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,  0.5f,  0.5f,  0.5f,  0.0f,  0.0f,
-    1.0f,  1.0f,  1.0f,  -0.5f, 0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
-    -0.5f, -0.5f, 0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,  -0.5f, 0.5f,  0.5f,
-    -1.0f, 0.0f,  0.0f,  1.0f,  0.0f,  -0.5f, 0.5f,  -0.5f, -1.0f, 0.0f,  0.0f,
-    1.0f,  1.0f,  -0.5f, -0.5f, -0.5f, -1.0f, 0.0f,  0.0f,  0.0f,  1.0f,  -0.5f,
-    -0.5f, -0.5f, -1.0f, 0.0f,  0.0f,  0.0f,  1.0f,  -0.5f, -0.5f, 0.5f,  -1.0f,
-    0.0f,  0.0f,  0.0f,  0.0f,  -0.5f, 0.5f,  0.5f,  -1.0f, 0.0f,  0.0f,  1.0f,
-    0.0f,  0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.5f,  0.5f,
-    -0.5f, 1.0f,  0.0f,  0.0f,  1.0f,  1.0f,  0.5f,  -0.5f, -0.5f, 1.0f,  0.0f,
-    0.0f,  0.0f,  1.0f,  0.5f,  -0.5f, -0.5f, 1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-    0.5f,  -0.5f, 0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.5f,  0.5f,  0.5f,
-    1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  -0.5f, -0.5f, -0.5f, 0.0f,  -1.0f, 0.0f,
-    0.0f,  1.0f,  0.5f,  -0.5f, -0.5f, 0.0f,  -1.0f, 0.0f,  1.0f,  1.0f,  0.5f,
-    -0.5f, 0.5f,  0.0f,  -1.0f, 0.0f,  1.0f,  0.0f,  0.5f,  -0.5f, 0.5f,  0.0f,
-    -1.0f, 0.0f,  1.0f,  0.0f,  -0.5f, -0.5f, 0.5f,  0.0f,  -1.0f, 0.0f,  0.0f,
-    0.0f,  -0.5f, -0.5f, -0.5f, 0.0f,  -1.0f, 0.0f,  0.0f,  1.0f,  -0.5f, 0.5f,
-    -0.5f, 0.0f,  1.0f,  0.0f,  0.0f,  1.0f,  0.5f,  0.5f,  -0.5f, 0.0f,  1.0f,
-    0.0f,  1.0f,  1.0f,  0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-    0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,  -0.5f, 0.5f,  0.5f,
-    0.0f,  1.0f,  0.0f,  0.0f,  0.0f,  -0.5f, 0.5f,  -0.5f, 0.0f,  1.0f,  0.0f,
-    0.0f,  1.0f};
 LOG_LEVEL Logger::level = L_MEDIUM;
 
 /* ----------------------------------------------------------------------------
@@ -94,6 +67,22 @@ void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
     camera.ProcessMouseScroll(static_cast<float>(yoffset));
 }
 
+void events() {
+  float currentFrame = static_cast<float>(glfwGetTime());
+  deltaTime = currentFrame - lastFrame;
+  lastFrame = currentFrame;
+  g.sysMon.update();
+
+  if (g.trapMouse)
+    glfwSetInputMode(g.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  if (!g.trapMouse)
+    glfwSetInputMode(g.window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+  if (g.renderFrame)
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  if (!g.renderFrame)
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+}
+
 /* ----------------------------------------------------------------------------
  * Setup and main
  * ----------------------------------------------------------------------------
@@ -125,6 +114,7 @@ void init() {
   glfwSetCursorPosCallback(g.window, mouse_callback);
   glfwSetScrollCallback(g.window, scroll_callback);
 
+  file::initFileHandler();
   ui::init(g.window, &g.show_demo_window);
   g.sysMon = SystemMonitor();
   Logger::info("SystemMonitor", "SystemMonitor initialized");
@@ -135,77 +125,33 @@ int main(int argc, char *argv[]) {
   (void)argc;
   (void)argv;
   init();
-  Shader lightingShader("src/shader/vertex.glsl", "src/shader/fragment.glsl");
-  Shader lightCubeShader("src/shader/lightVertex.glsl",
-                         "src/shader/lightFragment.glsl");
-
-  unsigned int VBO, cubeVAO;
-  glGenVertexArrays(1, &cubeVAO);
-  glGenBuffers(1, &VBO);
-
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-  glBindVertexArray(cubeVAO);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
-  glEnableVertexAttribArray(0);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
-                        (void *)(3 * sizeof(float)));
-  glEnableVertexAttribArray(1);
-  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
-                        (void *)(6 * sizeof(float)));
-  glEnableVertexAttribArray(2);
-
-  unsigned int lightCubeVAO;
-  glGenVertexArrays(1, &lightCubeVAO);
-  glBindVertexArray(lightCubeVAO);
-
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
-  glEnableVertexAttribArray(0);
-
-  g.texture.push_back(file::generateImage("src/imgs/container2.png"));
-  g.texture.push_back(file::generateImage("src/imgs/container2_specular.png"));
-
-  lightingShader.use();
-  lightingShader.setInt("material.diffuse", 0);
-  lightingShader.setInt("material.specular", 1);
+  Shader shader("src/shader/vertex.glsl", "src/shader/fragment.glsl");
+  Model model("resources/model/backpack/backpack.obj");
 
   Logger::info(ID, "Started rendering loop");
   while (!glfwWindowShouldClose(g.window)) {
     // Events
-    float currentFrame = static_cast<float>(glfwGetTime());
-    deltaTime = currentFrame - lastFrame;
-    lastFrame = currentFrame;
-    g.sysMon.update();
     glfwPollEvents();
     if (glfwGetWindowAttrib(g.window, GLFW_ICONIFIED) != 0) {
       ImGui_ImplGlfw_Sleep(10);
       continue;
     }
-    if (g.trapMouse)
-      glfwSetInputMode(g.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    if (!g.trapMouse)
-      glfwSetInputMode(g.window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    events();
 
     // input
     processInput(g.window);
 
     // rendering
-    gfx::render(&g, &lightingShader, &lightCubeShader, &camera, cubeVAO,
-                lightCubeVAO);
+    gfx::render(&shader, &model, &camera);
+    ui::render(true, g.show_demo_window, g.texture, g.sysMon);
 
     // check and call events and swap buffers
     glfwSwapBuffers(g.window);
   }
 
   // shutdown
-  glDeleteVertexArrays(1, &cubeVAO);
-  glDeleteVertexArrays(1, &lightCubeVAO);
-  glDeleteBuffers(1, &VBO);
   ui::shutdown();
-  glDeleteProgram(lightingShader.id);
-  glDeleteProgram(lightCubeShader.id);
+  glDeleteProgram(shader.id);
   glfwDestroyWindow(g.window);
   glfwTerminate();
   return 0;

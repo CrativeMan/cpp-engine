@@ -1,6 +1,6 @@
 CC = g++
 CFLAGS = -Wall -Wextra -pedantic
-LDFLAGS = -lglfw -lGL -lGLEW -lglm -lm -limgui
+LDFLAGS = -lglfw -lGL -lGLEW -lglm -lm -limgui -lassimp
 SRCDIR = src
 OBJDIR = obj
 TARGETDIR = bin

@@ -30,12 +30,12 @@
               vcpkg
               vcpkg-tool
 
-              imgui
-
               # engine specific
+              imgui
               glfw
               glew
               glm
+              assimp
             ] ++ (if system == "aarch64-darwin" then [ ] else [ gdb ]);
           };
       });
