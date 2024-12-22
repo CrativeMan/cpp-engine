@@ -18,7 +18,11 @@ class Model {
 public:
   std::vector<unsigned int> textureIds; // texutre ids for Debug utils
 
-  Model(const char *path) { loadModel(path); }
+  Model(const char *path) {
+    loadModel(path);
+    Logger::info("Model", "Created model (mc: %d, tc: %d, dir:%s)",
+                 meshes.size(), textures_loaded.size(), directory.c_str());
+  }
 
   // Draws all meshes associated to model
   void Draw(Shader &shader) {
@@ -110,6 +114,7 @@ private:
       textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     }
 
+    Logger::debug("Model", "Processed mesh %s", mesh->mName.C_Str());
     return Mesh(vertices, indices, textures);
   }
 

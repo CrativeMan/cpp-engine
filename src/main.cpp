@@ -7,6 +7,7 @@
 #include "header/model.hpp"
 #include "header/shader.hpp"
 #include "include/logger.hpp"
+#include <cstring>
 
 #define ID "ENGINE"
 
@@ -94,7 +95,7 @@ void events() {
  * Setup and main
  * ----------------------------------------------------------------------------
  */
-void init() {
+void init(int argc, char **argv) {
   glfwInit();
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -125,16 +126,17 @@ void init() {
   file::initFileHandler();
   ui::init(g.window.id, &g.show_demo_window);
   g.sysMon = SystemMonitor();
-  Logger::info("SystemMonitor", "SystemMonitor initialized");
+  if (argc >= 2) {
+    if (strcmp(" d", argv[1]))
+      Logger::level = L_VERBOSE;
+  }
   Logger::info(ID, "Initialized engine");
 }
 
 int main(int argc, char *argv[]) {
-  (void)argc;
-  (void)argv;
-  init();
+  init(argc, argv);
   Shader shader("src/shader/vertex.glsl", "src/shader/fragment.glsl");
-  Model model("resources/model/backpack/backpack.obj");
+  Model modelBackpack("resources/model/backpack/backpack.obj");
 
   Logger::info(ID, "Started rendering loop");
   while (!glfwWindowShouldClose(g.window.id)) {
@@ -149,8 +151,8 @@ int main(int argc, char *argv[]) {
     keyBoardInput(g.window.id);
 
     // rendering
-    gfx::render(&shader, &model, &camera, &g.window);
-    ui::render(true, g.show_demo_window, model.textureIds, g.sysMon);
+    gfx::render(&shader, &modelBackpack, &camera, &g.window);
+    ui::render(true, g.show_demo_window, modelBackpack.textureIds, g.sysMon);
 
     glfwSwapBuffers(g.window.id);
   }

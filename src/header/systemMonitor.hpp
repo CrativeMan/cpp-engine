@@ -1,6 +1,7 @@
 #ifndef SYSMON_HPP
 #define SYSMON_HPP
 
+#include "../include/logger.hpp"
 #include "imgui.h"
 #include <chrono>
 #include <fstream>
@@ -65,7 +66,9 @@ private:
   }
 
 public:
-  SystemMonitor() : lastFrameTime(std::chrono::high_resolution_clock::now()) {}
+  SystemMonitor() : lastFrameTime(std::chrono::high_resolution_clock::now()) {
+    Logger::info("SystemMonitor", "SystemMonitor initialized");
+  }
 
   void update() {
     // Update frame time and FPS
