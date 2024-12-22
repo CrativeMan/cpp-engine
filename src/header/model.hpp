@@ -16,6 +16,7 @@
 
 class Model {
 public:
+  std::vector<unsigned int> textureIds;
   Model(const char *path) { loadModel(path); }
   void Draw(Shader &shader) {
     for (unsigned int i = 0; i < meshes.size(); i++)
@@ -125,6 +126,7 @@ private:
         texture.path = str;
         textures.push_back(texture);
         textures_loaded.push_back(texture);
+        textureIds.push_back(texture.id);
       }
     }
     return textures;

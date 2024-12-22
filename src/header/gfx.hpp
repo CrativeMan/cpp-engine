@@ -17,7 +17,7 @@ namespace ui {
 void init(GLFWwindow *w, bool *show_demo_window);
 void shutdown();
 void render(bool show_debug_window, bool show_demo_window,
-            std::vector<unsigned int> texture, SystemMonitor sysMon);
+            std::vector<unsigned int> textures, SystemMonitor sysMon);
 } // namespace ui
 
 #endif // GFX_H

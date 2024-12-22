@@ -143,7 +143,7 @@ int main(int argc, char *argv[]) {
 
     // rendering
     gfx::render(&shader, &model, &camera);
-    ui::render(true, g.show_demo_window, g.texture, g.sysMon);
+    ui::render(true, g.show_demo_window, model.textureIds, g.sysMon);
 
     // check and call events and swap buffers
     glfwSwapBuffers(g.window);

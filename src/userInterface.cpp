@@ -37,17 +37,17 @@ void shutdown() {
 /*
  * Windows
  */
-void w_debugWindow(std::vector<unsigned int> texture, SystemMonitor sysMon) {
+void w_debugWindow(std::vector<unsigned int> textures, SystemMonitor sysMon) {
   ImGui::Begin("Debug Window");
   sysMon.render();
   if (ImGui::CollapsingHeader("Textures")) {
     ImGuiTreeNodeFlags flag =
         ImGuiTreeNodeFlags_None | ImGuiTreeNodeFlags_SpanFullWidth;
     char buffer[100];
-    for (size_t i = 0; i < texture.size(); i++) {
-      sprintf((char *)buffer, "%d", texture[i]);
+    for (size_t i = 0; i < textures.size(); i++) {
+      sprintf((char *)buffer, "%d", textures[i]);
       if (ImGui::TreeNodeEx(buffer, flag, "%s", buffer)) {
-        ImGui::Image(texture[i], ImVec2(100, 100));
+        ImGui::Image(textures[i], ImVec2(100, 100));
         ImGui::TreePop();
       }
     }
@@ -59,7 +59,7 @@ void w_debugWindow(std::vector<unsigned int> texture, SystemMonitor sysMon) {
  * Rendering
  */
 void render(bool show_debug_window, bool show_demo_window,
-            std::vector<unsigned int> texture, SystemMonitor sysMon) {
+            std::vector<unsigned int> textures, SystemMonitor sysMon) {
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
@@ -67,7 +67,7 @@ void render(bool show_debug_window, bool show_demo_window,
   if (show_demo_window)
     ImGui::ShowDemoWindow(&show_demo_window);
   if (show_debug_window)
-    ui::w_debugWindow(texture, sysMon);
+    ui::w_debugWindow(textures, sysMon);
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
