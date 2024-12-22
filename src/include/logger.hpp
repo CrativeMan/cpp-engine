@@ -78,7 +78,7 @@ private:
     std::time_t t = std::time(0);
     std::tm *now = std::localtime(&t);
     char buffer[25];
-    strftime(buffer, sizeof(buffer), "[%H:%M:%S-%d/%m/%Y]", now);
+    strftime(buffer, sizeof(buffer), "[%H:%M:%S]", now);
     return std::string(buffer);
   }
 };

@@ -1,7 +1,5 @@
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-
 #include "header/camera.hpp"
+
 #include "header/fileHandler.hpp"
 #include "header/gfx.hpp"
 #include "header/globals.h"
@@ -22,22 +20,22 @@ LOG_LEVEL Logger::level = L_MEDIUM;
  * Callbacks
  * ----------------------------------------------------------------------------
  */
-void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
+void framebufferSizeCallback(GLFWwindow *window, int width, int height) {
   (void)window;
   glViewport(0, 0, width, height);
 }
 
-void processInput(GLFWwindow *window) {
-  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+void keyBoardInput(GLFWwindow *window) {
+  if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
     glfwSetWindowShouldClose(window, true);
   if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
     g.renderFrame = !g.renderFrame;
-  if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
-    g.trapMouse = !g.trapMouse;
+  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    g.trapMouse = false;
   camera.ProcessKeyboard(window, deltaTime);
 }
 
-void mouse_callback(GLFWwindow *window, double xposIn, double yposIn) {
+void mouseCallback(GLFWwindow *window, double xposIn, double yposIn) {
   (void)window;
   if (g.trapMouse) {
     float xpos = static_cast<float>(xposIn);
@@ -60,11 +58,18 @@ void mouse_callback(GLFWwindow *window, double xposIn, double yposIn) {
   }
 }
 
-void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
+void scrollCallback(GLFWwindow *window, double xoffset, double yoffset) {
   (void)window;
   (void)xoffset;
   if (g.trapMouse)
     camera.ProcessMouseScroll(static_cast<float>(yoffset));
+}
+
+void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods) {
+  (void)window;
+  (void)mods;
+  if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
+    g.trapMouse = true;
 }
 
 void events() {
@@ -76,13 +81,13 @@ void events() {
   glfwPollEvents();
 
   if (g.trapMouse)
-    glfwSetInputMode(g.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(g.window.id, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   if (!g.trapMouse)
-    glfwSetInputMode(g.window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    glfwSetInputMode(g.window.id, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
   if (g.renderFrame)
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-  if (!g.renderFrame)
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  if (!g.renderFrame)
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 /* ----------------------------------------------------------------------------
@@ -95,15 +100,15 @@ void init() {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  g.window = glfwCreateWindow(WIDTH, HEIGHT, "engine", NULL, NULL);
-  if (g.window == NULL) {
+  g.window.id = glfwCreateWindow(WIDTH, HEIGHT, g.window.title, NULL, NULL);
+  if (g.window.id == NULL) {
     Logger::critical(ID, "Failed to initialize glfwWindow");
     glfwTerminate();
     exit(EXIT_FAILURE);
   }
   Logger::info(ID, "Initialized window '%d'", g.window);
-  glfwMakeContextCurrent(g.window);
-  glfwSetFramebufferSizeCallback(g.window, framebuffer_size_callback);
+  glfwMakeContextCurrent(g.window.id);
+  glfwSetFramebufferSizeCallback(g.window.id, framebufferSizeCallback);
   glViewport(0, 0, WIDTH, HEIGHT);
 
   glewExperimental = GL_TRUE;
@@ -111,13 +116,14 @@ void init() {
 
   glEnable(GL_DEPTH_TEST);
 
-  glfwSetInputMode(g.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  glfwSetInputMode(g.window.id, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   g.trapMouse = true;
-  glfwSetCursorPosCallback(g.window, mouse_callback);
-  glfwSetScrollCallback(g.window, scroll_callback);
+  glfwSetCursorPosCallback(g.window.id, mouseCallback);
+  glfwSetScrollCallback(g.window.id, scrollCallback);
+  glfwSetMouseButtonCallback(g.window.id, mouseButtonCallback);
 
   file::initFileHandler();
-  ui::init(g.window, &g.show_demo_window);
+  ui::init(g.window.id, &g.show_demo_window);
   g.sysMon = SystemMonitor();
   Logger::info("SystemMonitor", "SystemMonitor initialized");
   Logger::info(ID, "Initialized engine");
@@ -131,28 +137,28 @@ int main(int argc, char *argv[]) {
   Model model("resources/model/backpack/backpack.obj");
 
   Logger::info(ID, "Started rendering loop");
-  while (!glfwWindowShouldClose(g.window)) {
+  while (!glfwWindowShouldClose(g.window.id)) {
     // Events
     events();
-    if (glfwGetWindowAttrib(g.window, GLFW_ICONIFIED) != 0) {
+    if (glfwGetWindowAttrib(g.window.id, GLFW_ICONIFIED) != 0) {
       ImGui_ImplGlfw_Sleep(10);
       continue;
     }
 
     // input
-    processInput(g.window);
+    keyBoardInput(g.window.id);
 
     // rendering
-    gfx::render(&shader, &model, &camera);
+    gfx::render(&shader, &model, &camera, &g.window);
     ui::render(true, g.show_demo_window, model.textureIds, g.sysMon);
 
-    glfwSwapBuffers(g.window);
+    glfwSwapBuffers(g.window.id);
   }
 
   // shutdown
   ui::shutdown();
   glDeleteProgram(shader.id);
-  glfwDestroyWindow(g.window);
+  glfwDestroyWindow(g.window.id);
   glfwTerminate();
   return 0;
 }

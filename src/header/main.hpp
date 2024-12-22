@@ -7,7 +7,12 @@
 #include "systemMonitor.hpp"
 
 typedef struct {
-  GLFWwindow *window;
+  GLFWwindow *id;
+  char title[100];
+} Window;
+
+typedef struct {
+  Window window;
   SystemMonitor sysMon;
   std::vector<unsigned int> texture;
   bool show_demo_window;
