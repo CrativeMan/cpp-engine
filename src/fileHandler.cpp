@@ -1,11 +1,29 @@
 #include "include/logger.hpp"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <fstream>
+#include <sstream>
 #define STB_IMAGE_IMPLEMENTATION
 #include "include/stb_img.h"
 
 namespace file {
 void initFileHandler() { stbi_set_flip_vertically_on_load(true); }
+std::string loadStringFromFile(const char *path) {
+  std::ifstream file;
+
+  file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+  try {
+    file.open(path);
+    std::stringstream fileStream;
+    fileStream << file.rdbuf();
+    file.close();
+    Logger::info("File", "Read file to string form '%s'", path);
+    return fileStream.str();
+  } catch (std::ifstream::failure &e) {
+    Logger::error("File", "Failed to read file from '%s'", path);
+    return nullptr;
+  }
+}
 unsigned int generateImage(const char *path, const std::string &directory) {
   std::string filename = std::string(path);
   filename = directory + '/' + filename;

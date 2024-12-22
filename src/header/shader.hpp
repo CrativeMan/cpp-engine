@@ -2,12 +2,11 @@
 #define SHADER_HPP
 
 #include "../include/logger.hpp"
+#include "fileHandler.hpp"
 #include <GL/glew.h>
 #include <cassert>
-#include <fstream>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <sstream>
 #include <string>
 
 class Shader {
@@ -15,31 +14,8 @@ public:
   unsigned int id;
 
   Shader(const char *vertexPath, const char *fragmentPath) {
-    std::string vertexCode, fragmentCode;
-    std::ifstream vShaderFile, fShaderFile;
-
-    vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-    fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-
-    try {
-      vShaderFile.open(vertexPath);
-      fShaderFile.open(fragmentPath);
-      std::stringstream vShaderStream, fShaderStream;
-
-      vShaderStream << vShaderFile.rdbuf();
-      fShaderStream << fShaderFile.rdbuf();
-
-      vShaderFile.close();
-      fShaderFile.close();
-
-      vertexCode = vShaderStream.str();
-      fragmentCode = fShaderStream.str();
-      Logger::info("Shader", "Generated char* for shader from files '%s', '%s'",
-                   vertexPath, fragmentPath);
-    } catch (std::ifstream::failure &e) {
-      Logger::error("SHADER", "Files not successfully read '%s', '%s'",
-                    vertexPath, fragmentPath);
-    }
+    std::string vertexCode = file::loadStringFromFile(vertexPath);
+    std::string fragmentCode = file::loadStringFromFile(fragmentPath);
     const char *vShaderCode = vertexCode.c_str();
     const char *fShaderCode = fragmentCode.c_str();
 
@@ -49,20 +25,20 @@ public:
     glShaderSource(vertex, 1, &vShaderCode, NULL);
     glCompileShader(vertex);
     checkCompileErrors(vertex, "VERTEX");
-    Logger::info("SHADER", "Vertex shader compiled");
+    Logger::info("Shader", "Vertex shader compiled");
     // fragment Shader
     fragment = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment, 1, &fShaderCode, NULL);
     glCompileShader(fragment);
     checkCompileErrors(fragment, "FRAGMENT");
-    Logger::info("SHADER", "Fragment shader compiled");
+    Logger::info("Shader", "Fragment shader compiled");
     // shader Program
     id = glCreateProgram();
     glAttachShader(id, vertex);
     glAttachShader(id, fragment);
     glLinkProgram(id);
     checkCompileErrors(id, "PROGRAM");
-    Logger::info("SHADER", "Shader compiled");
+    Logger::info("Shader", "Shader compiled");
 
     glDeleteShader(vertex);
     glDeleteShader(fragment);
