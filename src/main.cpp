@@ -1,9 +1,11 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <bits/types/wint_t.h>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "header/camera.hpp"
 #include "header/fileHandler.hpp"
 #include "header/gfx.hpp"
 #include "header/globals.h"
@@ -14,6 +16,9 @@
 #define ID "ENGINE"
 
 Global g;
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+float deltaTime, lastFrame, lastX, lastY;
+bool firstMouse;
 float vertices[] = {
     -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.5f,  -0.5f, -0.5f, 1.0f, 0.0f,
     0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,
@@ -44,6 +49,10 @@ unsigned int indices[] = {
 };
 LOG_LEVEL Logger::level = L_MEDIUM;
 
+/* ----------------------------------------------------------------------------
+ * Callbacks
+ * ----------------------------------------------------------------------------
+ */
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
   (void)window;
   glViewport(0, 0, width, height);
@@ -54,6 +63,31 @@ void processInput(GLFWwindow *window) {
     glfwSetWindowShouldClose(window, true);
   if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
     g.renderFrame = !g.renderFrame;
+  camera.ProcessKeyboard(window, deltaTime);
+}
+
+void mouse_callback(GLFWwindow *window, double xposIn, double yposIn) {
+  float xpos = static_cast<float>(xposIn);
+  float ypos = static_cast<float>(yposIn);
+
+  if (firstMouse) {
+    lastX = xpos;
+    lastY = ypos;
+    firstMouse = false;
+  }
+
+  float xoffset = xpos - lastX;
+  float yoffset =
+      lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+  lastX = xpos;
+  lastY = ypos;
+
+  camera.ProcessMouseMovement(xoffset, yoffset);
+}
+
+void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
+  camera.ProcessMouseScroll(static_cast<float>(yoffset));
 }
 
 /* ----------------------------------------------------------------------------
@@ -81,6 +115,10 @@ void init() {
   glewInit();
 
   glEnable(GL_DEPTH_TEST);
+
+  glfwSetInputMode(g.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  glfwSetCursorPosCallback(g.window, mouse_callback);
+  glfwSetScrollCallback(g.window, scroll_callback);
 
   ui::init(g.window, &g.show_demo_window);
   g.sysMon = SystemMonitor();
@@ -117,6 +155,9 @@ int main(int argc, char *argv[]) {
   Logger::info(ID, "Started rendering loop");
   while (!glfwWindowShouldClose(g.window)) {
     // Events
+    float currentFrame = static_cast<float>(glfwGetTime());
+    deltaTime = currentFrame - lastFrame;
+    lastFrame = currentFrame;
     g.sysMon.update();
     glfwPollEvents();
     if (glfwGetWindowAttrib(g.window, GLFW_ICONIFIED) != 0) {
@@ -128,7 +169,7 @@ int main(int argc, char *argv[]) {
     processInput(g.window);
 
     // rendering
-    gfx::render(&g, &ourShader, VAO);
+    gfx::render(&g, &ourShader, &camera, VAO);
 
     // check and call events and swap buffers
     glfwSwapBuffers(g.window);

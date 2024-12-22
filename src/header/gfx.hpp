@@ -4,13 +4,14 @@
 #include "../header/shader.hpp"
 
 #include "../header/main.hpp"
+#include "camera.hpp"
 #include "systemMonitor.hpp"
 
 #include <imgui_impl_glfw.h>
 #include <vector>
 
 namespace gfx {
-void render(Global *g, Shader *ourShader, unsigned int VAO);
+void render(Global *g, Shader *ourShader, Camera *camera, unsigned int VAO);
 } // namespace gfx
 
 namespace ui {

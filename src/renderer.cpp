@@ -16,7 +16,7 @@ glm::vec3 cubePositions[] = {
     glm::vec3(1.5f, 0.2f, -1.5f),   glm::vec3(-1.3f, 1.0f, -1.5f)};
 
 namespace gfx {
-void render(Global *g, Shader *shader, unsigned int VAO) {
+void render(Global *g, Shader *shader, Camera *camera, unsigned int VAO) {
   if (g->renderFrame)
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   else
@@ -28,11 +28,10 @@ void render(Global *g, Shader *shader, unsigned int VAO) {
   trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
   trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
 
-  glm::mat4 view = glm::mat4(1.0f);
-  view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+  glm::mat4 view = camera->GetViewMatrix();
 
   glm::mat4 projection = glm::perspective(
-      glm::radians(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
+      glm::radians(camera->Zoom), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
 
   shader->use();
   shader->setMat4("view", view);
