@@ -12,6 +12,7 @@ typedef struct {
   std::vector<unsigned int> texture;
   bool show_demo_window;
   bool renderFrame;
+  bool trapMouse = true;
 } Global;
 
 #endif // MAIN_H

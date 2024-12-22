@@ -7,27 +7,38 @@
 
 namespace file {
 unsigned int generateImage(const char *filename) {
-  unsigned int texture;
-  glGenTextures(1, &texture);
-  glBindTexture(GL_TEXTURE_2D, texture);
-  // set the texture wrapping/filtering options (on currently bound texture)
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  // load and generate the texture
-  int width, height, nrChannels;
-  unsigned char *data = stbi_load(filename, &width, &height, &nrChannels, 0);
+  unsigned int textureID;
+  glGenTextures(1, &textureID);
+
+  int width, height, nrComponents;
+  unsigned char *data = stbi_load(filename, &width, &height, &nrComponents, 0);
   if (data) {
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
+    GLenum format;
+    if (nrComponents == 1)
+      format = GL_RED;
+    else if (nrComponents == 3)
+      format = GL_RGB;
+    else if (nrComponents == 4)
+      format = GL_RGBA;
+
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format,
                  GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                    GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    stbi_image_free(data);
   } else {
-    Logger::error("Texture", "Failed to load texture");
+    Logger::error("Texture", "Texture failed to load at path: %s", filename);
+    stbi_image_free(data);
   }
 
-  stbi_image_free(data);
-  Logger::info("File", "Generated image '%d'", texture);
-  return texture;
+  Logger::info("Texture", "Generated texture from path: %s", filename);
+  return textureID;
 }
 } // namespace file

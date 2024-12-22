@@ -16,17 +16,33 @@ Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float deltaTime, lastFrame, lastX, lastY;
 bool firstMouse;
 float vertices[] = {
-    -0.5f, -0.5f, -0.5f, 0.5f,  -0.5f, -0.5f, 0.5f,  0.5f,  -0.5f, 0.5f,  0.5f,
-    -0.5f, -0.5f, 0.5f,  -0.5f, -0.5f, -0.5f, -0.5f, -0.5f, -0.5f, 0.5f,  0.5f,
-    -0.5f, 0.5f,  0.5f,  0.5f,  0.5f,  0.5f,  0.5f,  0.5f,  -0.5f, 0.5f,  0.5f,
-    -0.5f, -0.5f, 0.5f,  -0.5f, 0.5f,  0.5f,  -0.5f, 0.5f,  -0.5f, -0.5f, -0.5f,
-    -0.5f, -0.5f, -0.5f, -0.5f, -0.5f, -0.5f, 0.5f,  -0.5f, 0.5f,  0.5f,  0.5f,
-    0.5f,  0.5f,  0.5f,  0.5f,  -0.5f, 0.5f,  -0.5f, -0.5f, 0.5f,  -0.5f, -0.5f,
-    0.5f,  -0.5f, 0.5f,  0.5f,  0.5f,  0.5f,  -0.5f, -0.5f, -0.5f, 0.5f,  -0.5f,
-    -0.5f, 0.5f,  -0.5f, 0.5f,  0.5f,  -0.5f, 0.5f,  -0.5f, -0.5f, 0.5f,  -0.5f,
-    -0.5f, -0.5f, -0.5f, 0.5f,  -0.5f, 0.5f,  0.5f,  -0.5f, 0.5f,  0.5f,  0.5f,
-    0.5f,  0.5f,  0.5f,  -0.5f, 0.5f,  0.5f,  -0.5f, 0.5f,  -0.5f,
-};
+    -0.5f, -0.5f, -0.5f, 0.0f,  0.0f,  -1.0f, 0.0f,  0.0f,  0.5f,  -0.5f, -0.5f,
+    0.0f,  0.0f,  -1.0f, 1.0f,  0.0f,  0.5f,  0.5f,  -0.5f, 0.0f,  0.0f,  -1.0f,
+    1.0f,  1.0f,  0.5f,  0.5f,  -0.5f, 0.0f,  0.0f,  -1.0f, 1.0f,  1.0f,  -0.5f,
+    0.5f,  -0.5f, 0.0f,  0.0f,  -1.0f, 0.0f,  1.0f,  -0.5f, -0.5f, -0.5f, 0.0f,
+    0.0f,  -1.0f, 0.0f,  0.0f,  -0.5f, -0.5f, 0.5f,  0.0f,  0.0f,  1.0f,  0.0f,
+    0.0f,  0.5f,  -0.5f, 0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,  0.5f,  0.5f,
+    0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,  0.5f,  0.5f,  0.5f,  0.0f,  0.0f,
+    1.0f,  1.0f,  1.0f,  -0.5f, 0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
+    -0.5f, -0.5f, 0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,  -0.5f, 0.5f,  0.5f,
+    -1.0f, 0.0f,  0.0f,  1.0f,  0.0f,  -0.5f, 0.5f,  -0.5f, -1.0f, 0.0f,  0.0f,
+    1.0f,  1.0f,  -0.5f, -0.5f, -0.5f, -1.0f, 0.0f,  0.0f,  0.0f,  1.0f,  -0.5f,
+    -0.5f, -0.5f, -1.0f, 0.0f,  0.0f,  0.0f,  1.0f,  -0.5f, -0.5f, 0.5f,  -1.0f,
+    0.0f,  0.0f,  0.0f,  0.0f,  -0.5f, 0.5f,  0.5f,  -1.0f, 0.0f,  0.0f,  1.0f,
+    0.0f,  0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.5f,  0.5f,
+    -0.5f, 1.0f,  0.0f,  0.0f,  1.0f,  1.0f,  0.5f,  -0.5f, -0.5f, 1.0f,  0.0f,
+    0.0f,  0.0f,  1.0f,  0.5f,  -0.5f, -0.5f, 1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+    0.5f,  -0.5f, 0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.5f,  0.5f,  0.5f,
+    1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  -0.5f, -0.5f, -0.5f, 0.0f,  -1.0f, 0.0f,
+    0.0f,  1.0f,  0.5f,  -0.5f, -0.5f, 0.0f,  -1.0f, 0.0f,  1.0f,  1.0f,  0.5f,
+    -0.5f, 0.5f,  0.0f,  -1.0f, 0.0f,  1.0f,  0.0f,  0.5f,  -0.5f, 0.5f,  0.0f,
+    -1.0f, 0.0f,  1.0f,  0.0f,  -0.5f, -0.5f, 0.5f,  0.0f,  -1.0f, 0.0f,  0.0f,
+    0.0f,  -0.5f, -0.5f, -0.5f, 0.0f,  -1.0f, 0.0f,  0.0f,  1.0f,  -0.5f, 0.5f,
+    -0.5f, 0.0f,  1.0f,  0.0f,  0.0f,  1.0f,  0.5f,  0.5f,  -0.5f, 0.0f,  1.0f,
+    0.0f,  1.0f,  1.0f,  0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+    0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,  -0.5f, 0.5f,  0.5f,
+    0.0f,  1.0f,  0.0f,  0.0f,  0.0f,  -0.5f, 0.5f,  -0.5f, 0.0f,  1.0f,  0.0f,
+    0.0f,  1.0f};
 LOG_LEVEL Logger::level = L_MEDIUM;
 
 /* ----------------------------------------------------------------------------
@@ -43,34 +59,39 @@ void processInput(GLFWwindow *window) {
     glfwSetWindowShouldClose(window, true);
   if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
     g.renderFrame = !g.renderFrame;
+  if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
+    g.trapMouse = !g.trapMouse;
   camera.ProcessKeyboard(window, deltaTime);
 }
 
 void mouse_callback(GLFWwindow *window, double xposIn, double yposIn) {
   (void)window;
-  float xpos = static_cast<float>(xposIn);
-  float ypos = static_cast<float>(yposIn);
+  if (g.trapMouse) {
+    float xpos = static_cast<float>(xposIn);
+    float ypos = static_cast<float>(yposIn);
 
-  if (firstMouse) {
+    if (firstMouse) {
+      lastX = xpos;
+      lastY = ypos;
+      firstMouse = false;
+    }
+
+    float xoffset = xpos - lastX;
+    float yoffset =
+        lastY - ypos; // reversed since y-coordinates go from bottom to top
+
     lastX = xpos;
     lastY = ypos;
-    firstMouse = false;
+
+    camera.ProcessMouseMovement(xoffset, yoffset);
   }
-
-  float xoffset = xpos - lastX;
-  float yoffset =
-      lastY - ypos; // reversed since y-coordinates go from bottom to top
-
-  lastX = xpos;
-  lastY = ypos;
-
-  camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
   (void)window;
   (void)xoffset;
-  camera.ProcessMouseScroll(static_cast<float>(yoffset));
+  if (g.trapMouse)
+    camera.ProcessMouseScroll(static_cast<float>(yoffset));
 }
 
 /* ----------------------------------------------------------------------------
@@ -100,6 +121,7 @@ void init() {
   glEnable(GL_DEPTH_TEST);
 
   glfwSetInputMode(g.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  g.trapMouse = true;
   glfwSetCursorPosCallback(g.window, mouse_callback);
   glfwSetScrollCallback(g.window, scroll_callback);
 
@@ -125,20 +147,29 @@ int main(int argc, char *argv[]) {
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
   glBindVertexArray(cubeVAO);
-
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
   glEnableVertexAttribArray(0);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                        (void *)(3 * sizeof(float)));
+  glEnableVertexAttribArray(1);
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                        (void *)(6 * sizeof(float)));
+  glEnableVertexAttribArray(2);
 
   unsigned int lightCubeVAO;
   glGenVertexArrays(1, &lightCubeVAO);
   glBindVertexArray(lightCubeVAO);
 
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
   glEnableVertexAttribArray(0);
 
-  g.texture.push_back(file::generateImage("src/imgs/container.jpg"));
+  g.texture.push_back(file::generateImage("src/imgs/container2.png"));
+  g.texture.push_back(file::generateImage("src/imgs/container2_specular.png"));
+
+  lightingShader.use();
+  lightingShader.setInt("material.diffuse", 0);
+  lightingShader.setInt("material.specular", 1);
 
   Logger::info(ID, "Started rendering loop");
   while (!glfwWindowShouldClose(g.window)) {
@@ -152,6 +183,10 @@ int main(int argc, char *argv[]) {
       ImGui_ImplGlfw_Sleep(10);
       continue;
     }
+    if (g.trapMouse)
+      glfwSetInputMode(g.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    if (!g.trapMouse)
+      glfwSetInputMode(g.window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
     // input
     processInput(g.window);
