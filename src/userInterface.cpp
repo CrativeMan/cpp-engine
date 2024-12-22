@@ -40,16 +40,17 @@ void shutdown() {
 void w_debugWindow(std::vector<unsigned int> texture, SystemMonitor sysMon) {
   ImGui::Begin("Debug Window");
   sysMon.render();
-  if (ImGui::CollapsingHeader("Textures")) {
-    ImGuiTreeNodeFlags flag =
-        ImGuiTreeNodeFlags_None | ImGuiTreeNodeFlags_SpanFullWidth;
-    char buffer[100];
-    for (size_t i = 0; i < texture.size(); i++) {
-      sprintf((char *)buffer, "%d", texture[i]);
-      if (ImGui::TreeNodeEx(buffer, flag, "%s", buffer)) {
-        ImGui::Image(texture[i], ImVec2(100, 100));
-        ImGui::TreePop();
-      }
+  ImGui::Separator();
+  ImGui::Text("Textures");
+  ImGuiTreeNodeFlags flag = ImGuiTreeNodeFlags_None |
+                            ImGuiTreeNodeFlags_SpanFullWidth |
+                            ImGuiTreeNodeFlags_DefaultOpen;
+  char buffer[100];
+  for (size_t i = 0; i < texture.size(); i++) {
+    sprintf((char *)buffer, "%d", texture[i]);
+    if (ImGui::TreeNodeEx(buffer, flag, "%s", buffer)) {
+      ImGui::Image(texture[i], ImVec2(100, 100));
+      ImGui::TreePop();
     }
   }
   ImGui::End();

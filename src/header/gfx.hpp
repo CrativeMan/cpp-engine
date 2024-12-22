@@ -11,7 +11,8 @@
 #include <vector>
 
 namespace gfx {
-void render(Global *g, Shader *ourShader, Camera *camera, unsigned int VAO);
+void render(Global *g, Shader *lightingShader, Shader *lightCubeShader,
+            Camera *camera, unsigned int cubeVAO, unsigned int lightCubeVAO);
 } // namespace gfx
 
 namespace ui {

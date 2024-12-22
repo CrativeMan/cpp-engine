@@ -1,9 +1,5 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <bits/types/wint_t.h>
-#include <glm/ext/matrix_transform.hpp>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
 #include "header/camera.hpp"
 #include "header/fileHandler.hpp"
@@ -20,32 +16,16 @@ Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float deltaTime, lastFrame, lastX, lastY;
 bool firstMouse;
 float vertices[] = {
-    -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.5f,  -0.5f, -0.5f, 1.0f, 0.0f,
-    0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,
-    -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f, -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-
-    -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 0.5f,  -0.5f, 0.5f,  1.0f, 0.0f,
-    0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-    -0.5f, 0.5f,  0.5f,  0.0f, 1.0f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f,
-
-    -0.5f, 0.5f,  0.5f,  1.0f, 0.0f, -0.5f, 0.5f,  -0.5f, 1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-    -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, -0.5f, 0.5f,  0.5f,  1.0f, 0.0f,
-
-    0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,
-    0.5f,  -0.5f, -0.5f, 0.0f, 1.0f, 0.5f,  -0.5f, -0.5f, 0.0f, 1.0f,
-    0.5f,  -0.5f, 0.5f,  0.0f, 0.0f, 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-    -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.5f,  -0.5f, -0.5f, 1.0f, 1.0f,
-    0.5f,  -0.5f, 0.5f,  1.0f, 0.0f, 0.5f,  -0.5f, 0.5f,  1.0f, 0.0f,
-    -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-
-    -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,
-    0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f, 0.5f,  0.5f,  0.0f, 0.0f, -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f};
-unsigned int indices[] = {
-    0, 1, 3, // first triangle
-    1, 2, 3  // second triangle
+    -0.5f, -0.5f, -0.5f, 0.5f,  -0.5f, -0.5f, 0.5f,  0.5f,  -0.5f, 0.5f,  0.5f,
+    -0.5f, -0.5f, 0.5f,  -0.5f, -0.5f, -0.5f, -0.5f, -0.5f, -0.5f, 0.5f,  0.5f,
+    -0.5f, 0.5f,  0.5f,  0.5f,  0.5f,  0.5f,  0.5f,  0.5f,  -0.5f, 0.5f,  0.5f,
+    -0.5f, -0.5f, 0.5f,  -0.5f, 0.5f,  0.5f,  -0.5f, 0.5f,  -0.5f, -0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f, -0.5f, -0.5f, -0.5f, 0.5f,  -0.5f, 0.5f,  0.5f,  0.5f,
+    0.5f,  0.5f,  0.5f,  0.5f,  -0.5f, 0.5f,  -0.5f, -0.5f, 0.5f,  -0.5f, -0.5f,
+    0.5f,  -0.5f, 0.5f,  0.5f,  0.5f,  0.5f,  -0.5f, -0.5f, -0.5f, 0.5f,  -0.5f,
+    -0.5f, 0.5f,  -0.5f, 0.5f,  0.5f,  -0.5f, 0.5f,  -0.5f, -0.5f, 0.5f,  -0.5f,
+    -0.5f, -0.5f, -0.5f, 0.5f,  -0.5f, 0.5f,  0.5f,  -0.5f, 0.5f,  0.5f,  0.5f,
+    0.5f,  0.5f,  0.5f,  -0.5f, 0.5f,  0.5f,  -0.5f, 0.5f,  -0.5f,
 };
 LOG_LEVEL Logger::level = L_MEDIUM;
 
@@ -67,6 +47,7 @@ void processInput(GLFWwindow *window) {
 }
 
 void mouse_callback(GLFWwindow *window, double xposIn, double yposIn) {
+  (void)window;
   float xpos = static_cast<float>(xposIn);
   float ypos = static_cast<float>(yposIn);
 
@@ -87,6 +68,8 @@ void mouse_callback(GLFWwindow *window, double xposIn, double yposIn) {
 }
 
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
+  (void)window;
+  (void)xoffset;
   camera.ProcessMouseScroll(static_cast<float>(yoffset));
 }
 
@@ -130,25 +113,30 @@ int main(int argc, char *argv[]) {
   (void)argc;
   (void)argv;
   init();
-  Shader ourShader("src/shader/vertex.glsl", "src/shader/fragment.glsl");
+  Shader lightingShader("src/shader/vertex.glsl", "src/shader/fragment.glsl");
+  Shader lightCubeShader("src/shader/lightVertex.glsl",
+                         "src/shader/lightFragment.glsl");
 
-  unsigned int VAO;
-  unsigned int VBO;
-  glGenVertexArrays(1, &VAO);
+  unsigned int VBO, cubeVAO;
+  glGenVertexArrays(1, &cubeVAO);
   glGenBuffers(1, &VBO);
-
-  glBindVertexArray(VAO);
 
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-  // position attribute
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
+  glBindVertexArray(cubeVAO);
+
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
   glEnableVertexAttribArray(0);
-  // texture coord attribute
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
-                        (void *)(3 * sizeof(float)));
-  glEnableVertexAttribArray(1);
+
+  unsigned int lightCubeVAO;
+  glGenVertexArrays(1, &lightCubeVAO);
+  glBindVertexArray(lightCubeVAO);
+
+  glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+  glEnableVertexAttribArray(0);
 
   g.texture.push_back(file::generateImage("src/imgs/container.jpg"));
 
@@ -169,15 +157,20 @@ int main(int argc, char *argv[]) {
     processInput(g.window);
 
     // rendering
-    gfx::render(&g, &ourShader, &camera, VAO);
+    gfx::render(&g, &lightingShader, &lightCubeShader, &camera, cubeVAO,
+                lightCubeVAO);
 
     // check and call events and swap buffers
     glfwSwapBuffers(g.window);
   }
 
   // shutdown
+  glDeleteVertexArrays(1, &cubeVAO);
+  glDeleteVertexArrays(1, &lightCubeVAO);
+  glDeleteBuffers(1, &VBO);
   ui::shutdown();
-  glDeleteProgram(ourShader.id);
+  glDeleteProgram(lightingShader.id);
+  glDeleteProgram(lightCubeShader.id);
   glfwDestroyWindow(g.window);
   glfwTerminate();
   return 0;
