@@ -14,9 +14,16 @@ public:
   unsigned int id;
 
   Shader(const char *vertexPath, const char *fragmentPath) {
+    Logger::debug("Creating shader");
     std::string vertexCode = file::loadStringFromFile(vertexPath);
-    std::string fragmentCode = file::loadStringFromFile(fragmentPath);
+    if (vertexCode.empty()) {
+      Logger::error("Shader", "Failed to load vertex shader");
+    }
     const char *vShaderCode = vertexCode.c_str();
+    std::string fragmentCode = file::loadStringFromFile(fragmentPath);
+    if (fragmentCode.empty()) {
+      Logger::error("Shader", "Failed to load fragment shader");
+    }
     const char *fShaderCode = fragmentCode.c_str();
 
     unsigned int vertex, fragment;

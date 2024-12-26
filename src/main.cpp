@@ -8,6 +8,7 @@
 #include "header/shader.hpp"
 #include "include/logger.hpp"
 #include <cstring>
+#include <vector>
 
 #define ID "ENGINE"
 
@@ -96,7 +97,10 @@ void events() {
  * ----------------------------------------------------------------------------
  */
 void init(int argc, char **argv) {
-  glfwInit();
+  if (!glfwInit()) {
+    Logger::critical(ID, "Failed to initialize glfw");
+    exit(EXIT_FAILURE);
+  }
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -113,7 +117,10 @@ void init(int argc, char **argv) {
   glViewport(0, 0, WIDTH, HEIGHT);
 
   glewExperimental = GL_TRUE;
-  glewInit();
+  if (glewInit() != GLEW_OK) {
+    Logger::critical(ID, "Failed to initialize GLEW");
+    exit(EXIT_FAILURE);
+  }
 
   glEnable(GL_DEPTH_TEST);
 
@@ -136,7 +143,49 @@ void init(int argc, char **argv) {
 int main(int argc, char *argv[]) {
   init(argc, argv);
   Shader shader("src/shader/vertex.glsl", "src/shader/fragment.glsl");
+  Shader skyboxShader("src/shader/skyboxVertex.glsl",
+                      "src/shader/skyboxFragment.glsl");
   Model modelBackpack("resources/model/backpack/backpack.obj");
+
+  float skyboxVertices[] = {
+      -1.0f, 1.0f,  -1.0f, -1.0f, -1.0f, -1.0f, 1.0f,  -1.0f, -1.0f, 1.0f,
+      -1.0f, -1.0f, 1.0f,  1.0f,  -1.0f, -1.0f, 1.0f,  -1.0f, -1.0f, -1.0f,
+      1.0f,  -1.0f, -1.0f, -1.0f, -1.0f, 1.0f,  -1.0f, -1.0f, 1.0f,  -1.0f,
+      -1.0f, 1.0f,  1.0f,  -1.0f, -1.0f, 1.0f,  1.0f,  -1.0f, -1.0f, 1.0f,
+      -1.0f, 1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  1.0f,
+      -1.0f, 1.0f,  -1.0f, -1.0f, -1.0f, -1.0f, 1.0f,  -1.0f, 1.0f,  1.0f,
+      1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  -1.0f, 1.0f,  -1.0f,
+      -1.0f, 1.0f,  -1.0f, 1.0f,  -1.0f, 1.0f,  1.0f,  -1.0f, 1.0f,  1.0f,
+      1.0f,  1.0f,  1.0f,  1.0f,  -1.0f, 1.0f,  1.0f,  -1.0f, 1.0f,  -1.0f,
+      -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f,  1.0f,  -1.0f, -1.0f, 1.0f,
+      -1.0f, -1.0f, -1.0f, -1.0f, 1.0f,  1.0f,  -1.0f, 1.0f};
+
+  unsigned int skyboxVAO, skyboxVBO;
+  glGenVertexArrays(1, &skyboxVAO);
+  glGenBuffers(1, &skyboxVBO);
+  glBindVertexArray(skyboxVAO);
+  glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices,
+               GL_STATIC_DRAW);
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+
+  std::vector<std::string> faces = {
+      "resources/imgs/cubeMap/right.jpg", "resources/imgs/cubeMap/left.jpg",
+      "resources/imgs/cubeMap/top.jpg",   "resources/imgs/cubeMap/bottom.jpg",
+      "resources/imgs/cubeMap/front.jpg", "resources/imgs/cubeMap/back.jpg"};
+  unsigned int cubemapTexture = file::generateCubeMap(faces);
+
+  gfx::Skybox skybox;
+  skybox.shader = &skyboxShader;
+  skybox.texture = cubemapTexture;
+  skybox.vao = skyboxVAO;
+  skybox.vbo = skyboxVBO;
+
+  skyboxShader.use();
+  skyboxShader.setInt("skybox", 0);
+
+  modelBackpack.textureIds.push_back(cubemapTexture);
 
   Logger::info(ID, "Started rendering loop");
   while (!glfwWindowShouldClose(g.window.id)) {
@@ -151,7 +200,7 @@ int main(int argc, char *argv[]) {
     keyBoardInput(g.window.id);
 
     // rendering
-    gfx::render(&shader, &modelBackpack, &camera, &g.window);
+    gfx::render(&shader, &modelBackpack, &skybox, &camera, &g.window);
     ui::render(true, g.show_demo_window, modelBackpack.textureIds, g.sysMon);
 
     glfwSwapBuffers(g.window.id);
@@ -161,6 +210,8 @@ int main(int argc, char *argv[]) {
   ui::shutdown();
   glDeleteProgram(shader.id);
   glfwDestroyWindow(g.window.id);
+  glDeleteVertexArrays(1, &skybox.vao);
+  glDeleteBuffers(1, &skybox.vbo);
   glfwTerminate();
   return 0;
 }

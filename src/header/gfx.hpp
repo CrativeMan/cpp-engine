@@ -11,9 +11,16 @@
 #include <vector>
 
 namespace gfx {
-void render(Shader *shader, Model *model, Camera *camera,
+typedef struct {
+  Shader *shader;
+  unsigned int vao;
+  unsigned int vbo;
+  unsigned int texture;
+} Skybox;
+
+void render(Shader *shader, Model *model, Skybox *skybox, Camera *camera,
             Window *window); // namespace gfx
-}
+} // namespace gfx
 namespace ui {
 void init(GLFWwindow *w, bool *show_demo_window);
 void shutdown();

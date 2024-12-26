@@ -19,6 +19,7 @@ public:
   std::vector<unsigned int> textureIds; // texutre ids for Debug utils
 
   Model(const char *path) {
+    Logger::debug("Starting model load");
     loadModel(path);
     Logger::info("Model", "Created model (mc: %d, tc: %d, dir:%s)",
                  meshes.size(), textures_loaded.size(), directory.c_str());
@@ -36,6 +37,7 @@ private:
   std::string directory;
 
   void loadModel(std::string path) {
+    Logger::info("Model", "Starting model loading");
     Assimp::Importer importer; // starts importer
     // reads obj model into aiScene (assimp high level scene)
     const aiScene *scene =
@@ -114,7 +116,7 @@ private:
       textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     }
 
-    Logger::debug("Model", "Processed mesh %s", mesh->mName.C_Str());
+    Logger::debug("Processed mesh %s", mesh->mName.C_Str());
     return Mesh(vertices, indices, textures);
   }
 
