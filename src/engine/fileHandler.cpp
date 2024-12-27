@@ -1,14 +1,13 @@
-#include "include/logger.hpp"
+#include "../include/logger.hpp"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <fstream>
 #include <sstream>
 #include <vector>
 #define STB_IMAGE_IMPLEMENTATION
-#include "include/stb_img.h"
+#include "../include/stb_img.h"
 
 namespace file {
-void initFileHandler() { stbi_set_flip_vertically_on_load(true); }
 std::string loadStringFromFile(const char *path) {
   std::ifstream file;
 
@@ -30,6 +29,7 @@ unsigned int generateCubeMap(std::vector<std::string> faces) {
   glGenTextures(1, &textureID);
   glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
+  stbi_set_flip_vertically_on_load(false);
   int width, height, nrChannels;
   for (unsigned int i = 0; i < faces.size(); i++) {
     unsigned char *data =
@@ -60,6 +60,7 @@ unsigned int generateImage(const char *path, const std::string &directory) {
   unsigned int textureID;
   glGenTextures(1, &textureID);
 
+  stbi_set_flip_vertically_on_load(true);
   int width, height, nrComponents;
   unsigned char *data =
       stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);

@@ -1,7 +1,7 @@
 #ifndef SHADER_HPP
 #define SHADER_HPP
 
-#include "../include/logger.hpp"
+#include "../../include/logger.hpp"
 #include "fileHandler.hpp"
 #include <GL/glew.h>
 #include <cassert>

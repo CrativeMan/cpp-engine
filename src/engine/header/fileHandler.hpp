@@ -4,7 +4,6 @@
 #include <vector>
 
 namespace file {
-void initFileHandler();
 std::string loadStringFromFile(const char *path);
 unsigned int generateCubeMap(std::vector<std::string> faces);
 unsigned int generateImage(const char *path, const std::string &directory);

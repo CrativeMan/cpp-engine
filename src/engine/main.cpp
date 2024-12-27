@@ -1,16 +1,16 @@
 #include "header/camera.hpp"
 
+#include "../include/logger.hpp"
 #include "header/fileHandler.hpp"
 #include "header/gfx.hpp"
 #include "header/globals.h"
 #include "header/main.hpp"
 #include "header/model.hpp"
 #include "header/shader.hpp"
-#include "include/logger.hpp"
 #include <cstring>
 #include <vector>
 
-#define ID "ENGINE"
+#define ID "Engine"
 
 Global g;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -130,7 +130,6 @@ void init(int argc, char **argv) {
   glfwSetScrollCallback(g.window.id, scrollCallback);
   glfwSetMouseButtonCallback(g.window.id, mouseButtonCallback);
 
-  file::initFileHandler();
   ui::init(g.window.id, &g.show_demo_window);
   g.sysMon = SystemMonitor();
   if (argc >= 2) {
@@ -148,17 +147,18 @@ int main(int argc, char *argv[]) {
   Model modelBackpack("resources/model/backpack/backpack.obj");
 
   float skyboxVertices[] = {
-      -1.0f, 1.0f,  -1.0f, -1.0f, -1.0f, -1.0f, 1.0f,  -1.0f, -1.0f, 1.0f,
-      -1.0f, -1.0f, 1.0f,  1.0f,  -1.0f, -1.0f, 1.0f,  -1.0f, -1.0f, -1.0f,
-      1.0f,  -1.0f, -1.0f, -1.0f, -1.0f, 1.0f,  -1.0f, -1.0f, 1.0f,  -1.0f,
-      -1.0f, 1.0f,  1.0f,  -1.0f, -1.0f, 1.0f,  1.0f,  -1.0f, -1.0f, 1.0f,
-      -1.0f, 1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  1.0f,
-      -1.0f, 1.0f,  -1.0f, -1.0f, -1.0f, -1.0f, 1.0f,  -1.0f, 1.0f,  1.0f,
-      1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  -1.0f, 1.0f,  -1.0f,
-      -1.0f, 1.0f,  -1.0f, 1.0f,  -1.0f, 1.0f,  1.0f,  -1.0f, 1.0f,  1.0f,
-      1.0f,  1.0f,  1.0f,  1.0f,  -1.0f, 1.0f,  1.0f,  -1.0f, 1.0f,  -1.0f,
-      -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f,  1.0f,  -1.0f, -1.0f, 1.0f,
-      -1.0f, -1.0f, -1.0f, -1.0f, 1.0f,  1.0f,  -1.0f, 1.0f};
+      -10.0f, 10.0f,  -10.0f, -10.0f, -10.0f, -10.0f, 10.0f,  -10.0f, -10.0f,
+      10.0f,  -10.0f, -10.0f, 10.0f,  10.0f,  -10.0f, -10.0f, 10.0f,  -10.0f,
+      -10.0f, -10.0f, 10.0f,  -10.0f, -10.0f, -10.0f, -10.0f, 10.0f,  -10.0f,
+      -10.0f, 10.0f,  -10.0f, -10.0f, 10.0f,  10.0f,  -10.0f, -10.0f, 10.0f,
+      10.0f,  -10.0f, -10.0f, 10.0f,  -10.0f, 10.0f,  10.0f,  10.0f,  10.0f,
+      10.0f,  10.0f,  10.0f,  10.0f,  10.0f,  -10.0f, 10.0f,  -10.0f, -10.0f,
+      -10.0f, -10.0f, 10.0f,  -10.0f, 10.0f,  10.0f,  10.0f,  10.0f,  10.0f,
+      10.0f,  10.0f,  10.0f,  10.0f,  -10.0f, 10.0f,  -10.0f, -10.0f, 10.0f,
+      -10.0f, 10.0f,  -10.0f, 10.0f,  10.0f,  -10.0f, 10.0f,  10.0f,  10.0f,
+      10.0f,  10.0f,  10.0f,  -10.0f, 10.0f,  10.0f,  -10.0f, 10.0f,  -10.0f,
+      -10.0f, -10.0f, -10.0f, -10.0f, -10.0f, 10.0f,  10.0f,  -10.0f, -10.0f,
+      10.0f,  -10.0f, -10.0f, -10.0f, -10.0f, 10.0f,  10.0f,  -10.0f, 10.0f};
 
   unsigned int skyboxVAO, skyboxVBO;
   glGenVertexArrays(1, &skyboxVAO);

@@ -1,7 +1,7 @@
 #ifndef SYSMON_HPP
 #define SYSMON_HPP
 
-#include "../include/logger.hpp"
+#include "../../include/logger.hpp"
 #include "imgui.h"
 #include <chrono>
 #include <fstream>

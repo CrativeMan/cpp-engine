@@ -3,9 +3,11 @@
 #include <imgui.h>
 #include <imgui_impl_opengl3.h>
 
+#include "../include/logger.hpp"
 #include "header/gfx.hpp"
 #include "header/systemMonitor.hpp"
-#include "include/logger.hpp"
+
+#define ID "Ui"
 
 namespace ui {
 /*
@@ -25,13 +27,13 @@ void init(GLFWwindow *w, bool *show_demo_window) {
   ImGui_ImplGlfw_InitForOpenGL(w, true);
   ImGui_ImplOpenGL3_Init("#version 330");
   *show_demo_window = false;
-  Logger::info("UI", "ImGui initialized");
+  Logger::info(ID, "ImGui initialized");
 }
 void shutdown() {
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplGlfw_Shutdown();
   ImGui::DestroyContext();
-  Logger::info("UI", "ImGui shutdown");
+  Logger::info(ID, "ImGui shutdown");
 }
 
 /*

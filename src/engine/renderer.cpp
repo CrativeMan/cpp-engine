@@ -19,7 +19,7 @@ void render(Shader *shader, Model *model, Skybox *skybox, Camera *camera,
   glm::mat4 modelMatrix = glm::mat4(1.0f);
   glm::mat4 view = camera->GetViewMatrix();
   glm::mat4 projection = glm::perspective(
-      glm::radians(camera->Zoom), (float)WIDTH / (float)HEIGHT, 0.1f, 700.0f);
+      glm::radians(camera->Zoom), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
   shader->setMat4("model", modelMatrix);
   shader->setMat4("view", view);
   shader->setMat4("projection", projection);
