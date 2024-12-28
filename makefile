@@ -17,7 +17,11 @@ TEST_SOURCES = $(wildcard $(TEST_SRCDIR)/*.cpp)
 TEST_OBJECTS = $(patsubst $(TEST_SRCDIR)/%.cpp, $(OBJDIR)/test_%.o, $(TEST_SOURCES))
 TEST_TARGET = $(TARGETDIR)/test
 
-all: $(ENGINE_TARGET) $(TEST_TARGET)
+all: $(ENGINE_TARGET) $(TEST_TARGET) run
+
+engine: $(ENGINE_TARGET)
+
+test: $(TEST_TARGET)
 
 # target building
 $(ENGINE_TARGET): $(ENGINE_OBJECTS) | $(TARGETDIR)
@@ -50,4 +54,4 @@ count:
 run:
 	./bin/engine
 
-.phony: all clean count run
+.phony: all clean count run engine test
