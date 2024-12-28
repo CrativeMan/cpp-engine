@@ -144,7 +144,8 @@ int main(int argc, char *argv[]) {
   Shader shader("src/shader/vertex.glsl", "src/shader/fragment.glsl");
   Shader skyboxShader("src/shader/skyboxVertex.glsl",
                       "src/shader/skyboxFragment.glsl");
-  Model modelBackpack("resources/model/backpack/backpack.obj");
+  // Model modelBackpack("resources/model/backpack/backpack.obj");
+  Model modelTest("resources/model/test/untitled.obj");
 
   float skyboxVertices[] = {
       -10.0f, 10.0f,  -10.0f, -10.0f, -10.0f, -10.0f, 10.0f,  -10.0f, -10.0f,
@@ -185,7 +186,8 @@ int main(int argc, char *argv[]) {
   skyboxShader.use();
   skyboxShader.setInt("skybox", 0);
 
-  modelBackpack.textureIds.push_back(cubemapTexture);
+  // modelBackpack.textureIds.push_back(cubemapTexture);
+  modelTest.textureIds.push_back(cubemapTexture);
 
   Logger::info(ID, "Started rendering loop");
   while (!glfwWindowShouldClose(g.window.id)) {
@@ -200,8 +202,8 @@ int main(int argc, char *argv[]) {
     keyBoardInput(g.window.id);
 
     // rendering
-    gfx::render(&shader, &modelBackpack, &skybox, &camera, &g.window);
-    ui::render(true, g.show_demo_window, modelBackpack.textureIds, g.sysMon);
+    gfx::render(&shader, &modelTest, &skybox, &camera, &g.window);
+    ui::render(true, g.show_demo_window, modelTest.textureIds, g.sysMon);
 
     glfwSwapBuffers(g.window.id);
   }
