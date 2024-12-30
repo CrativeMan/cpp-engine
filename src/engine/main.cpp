@@ -96,7 +96,18 @@ void events() {
  * Setup and main
  * ----------------------------------------------------------------------------
  */
-void init(int argc, char **argv) {
+void parseArgs(int argc, char *argv[]) {
+  for (int i = 1; i < argc; ++i) {
+    std::string arg = argv[i];
+
+    if (arg == "-d" || arg == "-debug") {
+      Logger::level = L_VERBOSE;
+      Logger::info(ID, "Set log level to verbose");
+    }
+  }
+}
+
+void init(int argc, char *argv[]) {
   if (!glfwInit()) {
     Logger::critical(ID, "Failed to initialize glfw");
     exit(EXIT_FAILURE);
@@ -132,10 +143,7 @@ void init(int argc, char **argv) {
 
   ui::init(g.window.id, &g.show_demo_window);
   g.sysMon = SystemMonitor();
-  if (argc >= 2) {
-    if (strcmp(" d", argv[1]))
-      Logger::level = L_VERBOSE;
-  }
+  parseArgs(argc, argv);
   Logger::info(ID, "Initialized engine");
 }
 
@@ -145,7 +153,7 @@ int main(int argc, char *argv[]) {
   Shader skyboxShader("src/shader/skyboxVertex.glsl",
                       "src/shader/skyboxFragment.glsl");
   // Model modelBackpack("resources/model/backpack/backpack.obj");
-  Model modelTest("resources/model/test/untitled.obj");
+  Model modelTest("resources/model/test/Rito.obj");
 
   float skyboxVertices[] = {
       -10.0f, 10.0f,  -10.0f, -10.0f, -10.0f, -10.0f, 10.0f,  -10.0f, -10.0f,

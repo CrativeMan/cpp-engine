@@ -25,6 +25,15 @@ public:
                  meshes.size(), textures_loaded.size(), directory.c_str());
   }
 
+  ~Model() {
+    Logger::debug("Destroying model");
+    for (Texture &texture : textures_loaded) {
+      glDeleteTextures(1, &texture.id);
+    }
+
+    Logger::info("Model", "Destroyed model");
+  }
+
   // Draws all meshes associated to model
   void Draw(Shader &shader) {
     for (unsigned int i = 0; i < meshes.size(); i++)
