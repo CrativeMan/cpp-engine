@@ -69,6 +69,8 @@ public:
   // systems)
   void ProcessKeyboard(GLFWwindow *window, float deltaTime) {
     float velocity = MovementSpeed * deltaTime;
+    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+      velocity *= 2.0f;
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
       Position += Front * velocity;
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
