@@ -24,14 +24,13 @@ public:
   unsigned int numIndices;
 
   Model(const char *path) {
-    Logger::debug("Starting model load");
     numVertices = 0;
     numIndices = 0;
     this->path = path;
     this->file = file::getFileName(path);
     loadModel(path);
-    Logger::info("Model", "Created model (mc: %d, tc: %d, dir:%s)",
-                 meshes.size(), textures_loaded.size(), directory.c_str());
+    Logger::info("Model", "Created model '%s' (mc: %d, tc: %d)", file.c_str(),
+                 meshes.size(), textures_loaded.size());
   }
 
   ~Model() {
@@ -40,7 +39,7 @@ public:
       glDeleteTextures(1, &texture.id);
     }
 
-    Logger::info("Model", "Destroyed model");
+    Logger::info("Model", "Destroyed model '%s'", file.c_str());
   }
 
   // Draws all meshes associated to model
@@ -54,7 +53,7 @@ private:
   std::string directory;
 
   void loadModel(std::string path) {
-    Logger::info("Model", "Starting model loading");
+    Logger::info("Model", "Started model '%s' loading", file.c_str());
     Assimp::Importer importer; // starts importer
     // reads obj model into aiScene (assimp high level scene)
     const aiScene *scene =

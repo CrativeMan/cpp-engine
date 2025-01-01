@@ -56,4 +56,4 @@ count:
 run:
 	./bin/engine
 
-.phony: all clean count run engine test
+.phony: all new engine test clean count run

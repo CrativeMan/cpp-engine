@@ -147,6 +147,14 @@ void init(int argc, char *argv[]) {
   Logger::info(ID, "Initialized engine");
 }
 
+void shutdown(Shader *shader) {
+  ui::shutdown();
+  glDeleteProgram(shader->id);
+  glfwDestroyWindow(g.window.id);
+  glfwTerminate();
+  Logger::info(ID, "Shutdown engine");
+};
+
 int main(int argc, char *argv[]) {
   init(argc, argv);
   Shader shader("src/shader/vertex.glsl", "src/shader/fragment.glsl");
@@ -183,9 +191,6 @@ int main(int argc, char *argv[]) {
   }
 
   // shutdown
-  ui::shutdown();
-  glDeleteProgram(shader.id);
-  glfwDestroyWindow(g.window.id);
-  glfwTerminate();
+  shutdown(&shader);
   return 0;
 }
