@@ -32,7 +32,7 @@ public:
   static void debug(const char *format, ...) {
     va_list args;
     va_start(args, format);
-    log<L_VERBOSE>("DEBUG", "", format, args);
+    log<L_VERBOSE>("[DEBUG]", "", format, args);
     va_end(args);
   }
   static void info(const std::string &id, const char *format, ...) {
