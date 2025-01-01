@@ -17,9 +17,18 @@
 class Model {
 public:
   std::vector<unsigned int> textureIds; // texutre ids for Debug utils
+  std::vector<Mesh> meshes;
+  std::string path;
+  std::string file;
+  unsigned int numVertices;
+  unsigned int numIndices;
 
   Model(const char *path) {
     Logger::debug("Starting model load");
+    numVertices = 0;
+    numIndices = 0;
+    this->path = path;
+    this->file = file::getFileName(path);
     loadModel(path);
     Logger::info("Model", "Created model (mc: %d, tc: %d, dir:%s)",
                  meshes.size(), textures_loaded.size(), directory.c_str());
@@ -41,7 +50,6 @@ public:
   }
 
 private:
-  std::vector<Mesh> meshes;
   std::vector<Texture> textures_loaded;
   std::string directory;
 
@@ -125,7 +133,10 @@ private:
       textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     }
 
-    Logger::debug("Processed mesh %s", mesh->mName.C_Str());
+    numVertices += vertices.size();
+    numIndices += indices.size();
+    Logger::debug("Processed mesh %s (vc: %zu, ic:%zu)", mesh->mName.C_Str(),
+                  vertices.size(), indices.size());
     return Mesh(vertices, indices, textures);
   }
 

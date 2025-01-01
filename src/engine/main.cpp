@@ -1,13 +1,13 @@
 #include "header/camera.hpp"
 
 #include "../include/logger.hpp"
-#include "header/fileHandler.hpp"
 #include "header/gfx.hpp"
 #include "header/globals.h"
 #include "header/main.hpp"
 #include "header/model.hpp"
 #include "header/shader.hpp"
 #include <cstring>
+#include <memory>
 #include <vector>
 
 #define ID "Engine"
@@ -152,50 +152,16 @@ int main(int argc, char *argv[]) {
   Shader shader("src/shader/vertex.glsl", "src/shader/fragment.glsl");
   Shader skyboxShader("src/shader/skyboxVertex.glsl",
                       "src/shader/skyboxFragment.glsl");
-  // Model modelBackpack("resources/model/backpack/backpack.obj");
-  Model modelTest("resources/model/test/Rito.obj");
 
-  float skyboxVertices[] = {
-      -10.0f, 10.0f,  -10.0f, -10.0f, -10.0f, -10.0f, 10.0f,  -10.0f, -10.0f,
-      10.0f,  -10.0f, -10.0f, 10.0f,  10.0f,  -10.0f, -10.0f, 10.0f,  -10.0f,
-      -10.0f, -10.0f, 10.0f,  -10.0f, -10.0f, -10.0f, -10.0f, 10.0f,  -10.0f,
-      -10.0f, 10.0f,  -10.0f, -10.0f, 10.0f,  10.0f,  -10.0f, -10.0f, 10.0f,
-      10.0f,  -10.0f, -10.0f, 10.0f,  -10.0f, 10.0f,  10.0f,  10.0f,  10.0f,
-      10.0f,  10.0f,  10.0f,  10.0f,  10.0f,  -10.0f, 10.0f,  -10.0f, -10.0f,
-      -10.0f, -10.0f, 10.0f,  -10.0f, 10.0f,  10.0f,  10.0f,  10.0f,  10.0f,
-      10.0f,  10.0f,  10.0f,  10.0f,  -10.0f, 10.0f,  -10.0f, -10.0f, 10.0f,
-      -10.0f, 10.0f,  -10.0f, 10.0f,  10.0f,  -10.0f, 10.0f,  10.0f,  10.0f,
-      10.0f,  10.0f,  10.0f,  -10.0f, 10.0f,  10.0f,  -10.0f, 10.0f,  -10.0f,
-      -10.0f, -10.0f, -10.0f, -10.0f, -10.0f, 10.0f,  10.0f,  -10.0f, -10.0f,
-      10.0f,  -10.0f, -10.0f, -10.0f, -10.0f, 10.0f,  10.0f,  -10.0f, 10.0f};
+  std::vector<std::unique_ptr<Model>> models;
 
-  unsigned int skyboxVAO, skyboxVBO;
-  glGenVertexArrays(1, &skyboxVAO);
-  glGenBuffers(1, &skyboxVBO);
-  glBindVertexArray(skyboxVAO);
-  glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices,
-               GL_STATIC_DRAW);
-  glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-
-  std::vector<std::string> faces = {
-      "resources/imgs/cubeMap/right.jpg", "resources/imgs/cubeMap/left.jpg",
-      "resources/imgs/cubeMap/top.jpg",   "resources/imgs/cubeMap/bottom.jpg",
-      "resources/imgs/cubeMap/front.jpg", "resources/imgs/cubeMap/back.jpg"};
-  unsigned int cubemapTexture = file::generateCubeMap(faces);
-
-  gfx::Skybox skybox;
-  skybox.shader = &skyboxShader;
-  skybox.texture = cubemapTexture;
-  skybox.vao = skyboxVAO;
-  skybox.vbo = skyboxVBO;
-
-  skyboxShader.use();
-  skyboxShader.setInt("skybox", 0);
-
-  // modelBackpack.textureIds.push_back(cubemapTexture);
-  modelTest.textureIds.push_back(cubemapTexture);
+  models.push_back(
+      std::make_unique<Model>("resources/model/backpack/backpack.obj"));
+  models.push_back(std::make_unique<Model>("resources/model/test/pot.obj"));
+  models.push_back(std::make_unique<Model>("resources/model/mipha/Mipha.dae"));
+  models.push_back(std::make_unique<Model>("resources/model/dog/Dog.dae"));
+  models.push_back(std::make_unique<Model>(
+      "resources/model/korok/Korok/000/Npc_Korogu_M_000.dae"));
 
   Logger::info(ID, "Started rendering loop");
   while (!glfwWindowShouldClose(g.window.id)) {
@@ -210,8 +176,8 @@ int main(int argc, char *argv[]) {
     keyBoardInput(g.window.id);
 
     // rendering
-    gfx::render(&shader, &modelTest, &skybox, &camera, &g.window);
-    ui::render(true, g.show_demo_window, modelTest.textureIds, g.sysMon);
+    gfx::render(&shader, models, &camera, &g.window);
+    ui::render(true, g.show_demo_window, models, g.sysMon);
 
     glfwSwapBuffers(g.window.id);
   }
@@ -220,8 +186,6 @@ int main(int argc, char *argv[]) {
   ui::shutdown();
   glDeleteProgram(shader.id);
   glfwDestroyWindow(g.window.id);
-  glDeleteVertexArrays(1, &skybox.vao);
-  glDeleteBuffers(1, &skybox.vbo);
   glfwTerminate();
   return 0;
 }

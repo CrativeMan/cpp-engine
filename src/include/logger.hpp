@@ -38,27 +38,27 @@ public:
   static void info(const std::string &id, const char *format, ...) {
     va_list args;
     va_start(args, format);
-    log<L_MEDIUM>(id, "[INFO]  ", format, args);
+    log<L_MEDIUM>(id, "[INFO]", format, args);
     va_end(args);
   }
   static void warn(const std::string &id, const char *format, ...) {
     va_list args;
     va_start(args, format);
-    log<L_NORMAL>(id, YELLOW + std::string("[WARN]  ") + RESET, format, args);
+    log<L_NORMAL>(id, YELLOW + std::string("[WARN]") + RESET, format, args);
     va_end(args);
   }
   static void error(const std::string &id, const char *format, ...) {
     va_list args;
     va_start(args, format);
-    log<L_NORMAL>(id, RED + std::string("[ERROR]  ") + RESET, format, args,
+    log<L_NORMAL>(id, RED + std::string("[ERROR]") + RESET, format, args,
                   std::cerr);
     va_end(args);
   }
   static void critical(const std::string &id, const char *format, ...) {
     va_list args;
     va_start(args, format);
-    log<L_NORMAL>(id, MAGENTA + std::string("[CRITICAL]  ") + RESET, format,
-                  args, std::cerr);
+    log<L_NORMAL>(id, MAGENTA + std::string("[CRITICAL]") + RESET, format, args,
+                  std::cerr);
     va_end(args);
   }
 
@@ -68,7 +68,7 @@ private:
                   const char *format, va_list args,
                   Stream &stream = std::cout) {
     if (level >= L) {
-      stream << print_id(id) << prefix << format_string(format, args) << "\n";
+      stream << print_id(id, prefix) << format_string(format, args) << "\n";
     }
   }
 
@@ -78,13 +78,14 @@ private:
     return std::string(buffer);
   }
 
-  static std::string print_id(const std::string &id) {
+  static std::string print_id(const std::string &id, std::string prefix) {
     std::string rtrn;
     rtrn.append(BOLD);
     rtrn.append(time_as_string());
-    rtrn.append("[" + id + "]");
+    rtrn.append(" " + prefix);
     rtrn.append(RESET);
-    rtrn.append(" ");
+    std::string spaces(20 - id.length(), ' ');
+    rtrn.append(" " + id + spaces);
     return rtrn;
   }
 

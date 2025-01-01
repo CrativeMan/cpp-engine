@@ -5,13 +5,15 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/glm.hpp>
 #include <glm/trigonometric.hpp>
+#include <memory>
 
 #include "header/globals.h"
+#include "header/model.hpp"
 #include "header/shader.hpp"
 
 namespace gfx {
-void render(Shader *shader, Model *model, Skybox *skybox, Camera *camera,
-            Window *window) {
+void render(Shader *shader, std::vector<std::unique_ptr<Model>> &models,
+            Camera *camera, Window *window) {
   glClearColor(0.12f, 0.12f, 0.15f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -20,23 +22,14 @@ void render(Shader *shader, Model *model, Skybox *skybox, Camera *camera,
   glm::mat4 view = camera->GetViewMatrix();
   glm::mat4 projection = glm::perspective(
       glm::radians(camera->Zoom), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
-  shader->setMat4("model", modelMatrix);
   shader->setMat4("view", view);
   shader->setMat4("projection", projection);
-  model->Draw(*shader);
-
-  glDepthFunc(GL_LEQUAL);
-  skybox->shader->use();
-  view = glm::mat4(glm::mat3(camera->GetViewMatrix()));
-  skybox->shader->setMat4("view", view);
-  skybox->shader->setMat4("projection", projection);
-  // skybox cube
-  glBindVertexArray(skybox->vao);
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_CUBE_MAP, skybox->texture);
-  glDrawArrays(GL_TRIANGLES, 0, 36);
-  glBindVertexArray(0);
-  glDepthFunc(GL_LESS);
+  for (long unsigned int i = 0; i < models.size(); i++) {
+    modelMatrix = glm::mat4(1.0f);
+    modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, i * 6.0f));
+    shader->setMat4("model", modelMatrix);
+    models[i]->Draw(*shader);
+  }
 
   snprintf(window->title, sizeof(window->title),
            "X:%.2f Y:%.2f Z:%.2f FOV:%.0f", camera->Position.x,

@@ -19,6 +19,8 @@ TEST_TARGET = $(TARGETDIR)/test
 
 all: $(ENGINE_TARGET) $(TEST_TARGET) run
 
+new: clean all
+
 engine: $(ENGINE_TARGET)
 
 test: $(TEST_TARGET)

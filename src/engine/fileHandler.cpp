@@ -85,12 +85,16 @@ unsigned int generateImage(const char *path, const std::string &directory) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     stbi_image_free(data);
+    Logger::info("Texture", "Generated texture from path: %s", path);
+    return textureID;
   } else {
     Logger::error("Texture", "Texture failed to load at path: %s", path);
     stbi_image_free(data);
+    return -1;
   }
-
-  Logger::info("Texture", "Generated texture from path: %s", path);
-  return textureID;
+}
+std::string getFileName(std::string path) {
+  size_t found = path.find_last_of("/\\");
+  return path.substr(found + 1);
 }
 } // namespace file
